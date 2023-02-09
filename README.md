@@ -1,7 +1,7 @@
 # FV_MC_Toolbox
 Model Checking Toolbox in Python
 
-![GitHub](https://img.shields.io/github/license/timkpaine/blerg)
+![GitHub](https://img.shields.io/badge/License-AGPLv3-green)
 
 
 ## Overview

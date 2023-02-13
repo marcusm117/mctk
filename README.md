@@ -1,4 +1,4 @@
-# FV_mltk
+# FV_mctk
 Model Checking Toolkit in Python
 
 ![GitHub](https://img.shields.io/badge/License-AGPLv3-green)

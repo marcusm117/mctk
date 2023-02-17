@@ -2,6 +2,7 @@
 Model Checking Toolkit in Python
 
 ![GitHub](https://img.shields.io/badge/License-AGPLv3-green)
+![GitHub](https://img.shields.io/github/issues/marcusm117/FV_mctk)
 
 
 ## Overview

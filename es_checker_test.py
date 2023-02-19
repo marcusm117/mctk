@@ -1,7 +1,7 @@
 # Authors: marcusm117
 # License: AGPL v3.0
 
-from mctk import ExplicitStateChecker
+from mctk import models
 import json
 
 
@@ -20,7 +20,7 @@ def load_creation_test():
 
 def runtime_creation_test():
     # create a model during runtime
-    model_2 = ExplicitStateChecker.ExplicitStateChecker()
+    model_2 = models.KripkeStruct()
 
     # add atoms
     atoms = ["a", "b", "c", "d"]

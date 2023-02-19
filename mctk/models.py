@@ -5,7 +5,7 @@ from typing import List, DefaultDict, Dict, Set, Tuple
 from collections import defaultdict
 
 
-class ExplicitStateChecker:
+class KripkeStruct:
     def __init__(self, model_json=None):
         if model_json != None:
             self.atoms = tuple(model_json["atoms"])

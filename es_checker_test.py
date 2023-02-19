@@ -29,27 +29,30 @@ def runtime_creation_test():
     # get current atoms
     atoms = model_2.get_atoms()
     print(atoms)
+    assert(atoms == ['a', 'b', 'c', 'd'])
 
     # add states
     model_2.add_state("s1", 0b1000)  # s1 has label "a"
     model_2.add_state("s2", 0b1100)  # s2 has labels "a", "b"
     states = {"s3" : 0b0110,         # s3 has labels "b", "c"
-            "s4" : 0b0111,         # s4 has labels "b", "c", "d"
-            "s5" : 0b0100,         # s5 has label "b"
-            "s6" : 0b0010,         # s6 has label "c"
-            "s7" : 0b0001          # s7 has label "d"
-            }
+              "s4" : 0b0111,         # s4 has labels "b", "c", "d"
+              "s5" : 0b0100,         # s5 has label "b"
+              "s6" : 0b0010,         # s6 has label "c"
+              "s7" : 0b0001          # s7 has label "d"
+             }
     model_2.add_states(states)
 
     # get current states
     states = model_2.get_states()
     print(states)
+    assert(states == {'s1': 8, 's2': 12, 's3': 6, 's4': 7, 's5': 4, 's6': 2, 's7': 1})
 
     # remove states
     model_2.remove_state("s5")
     states = ["s6", "s7"]
     model_2.remove_states(states)
     print(model_2.get_states())
+    assert(model_2.get_states() == {'s1': 8, 's2': 12, 's3': 6, 's4': 7})
 
     # set start states
     starts = ["s1", "s4"]
@@ -59,18 +62,20 @@ def runtime_creation_test():
     # get current start states
     starts = model_2.get_starts()
     print(starts)
+    assert(starts == ['s1'])
 
     # add transitions
     trans = {"s1" : ["s2"],        # a -> ab
-            "s2" : ["s3", "s4"],        # ab -> bc
-            "s3" : ["s4", "s1"],  # bc -> bcd, a
-            "s4" : ["s2"]         # bcd -> ab
+             "s2" : ["s3", "s4"],        # ab -> bc
+             "s3" : ["s4", "s1"],  # bc -> bcd, a
+             "s4" : ["s2"]         # bcd -> ab
             }
     model_2.add_trans(trans)
 
     # get current transitions
     trans = model_2.get_trans()
     print(trans)
+    assert(trans == {'s1': ['s2'], 's2': ['s3', 's4'], 's3': ['s4', 's1'], 's4': ['s2']})
 
     # remove transitions
     trans = {"s2" : ["s4"],
@@ -78,6 +83,7 @@ def runtime_creation_test():
             }
     model_2.remove_trans(trans)
     print(model_2.get_trans())
+    assert(model_2.get_trans() == {'s1': ['s2'], 's2': ['s3'], 's3': ['s4', 's1'], 's4': []})
 
     print("Congrats! All Runtime Creation Tests are Passed.")
 

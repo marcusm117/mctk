@@ -10,7 +10,7 @@ class KripkeStruct:
         if model_json != None:
             self.atoms = tuple(model_json["atoms"])
 
-            self.states = defaultdict(str, model_json["states"])
+            self.states = model_json["states"]
             self.states_labels = set()
             for label in self.states.values():
                 self.states_labels.add(label)
@@ -23,7 +23,7 @@ class KripkeStruct:
                     self.trans_inverted[next_state].append(state)
         else:
             self.atoms = ()
-            self.states = defaultdict(int)
+            self.states = {}
             self.states_labels = set()
             self.starts = ()
             self.trans = defaultdict(list)
@@ -51,8 +51,8 @@ class KripkeStruct:
 
     def add_state(self, state: str, label: int):
         # if the state or the label exisits already, can't add again
-        if self.states[state]:
-            raise Exception("Can't add an Exisiting State again")
+        if state in self.states:
+            raise Exception("Can't add an Exisiting State Name again")
         elif label in self.states_labels:
             raise Exception("Can't add an Exisiting State Label again")
         else:
@@ -66,9 +66,19 @@ class KripkeStruct:
 
 
     def remove_state(self, state: str):
-        if self.states[state]:
+        if state in self.states:
             label = self.states.pop(state)
             self.states_labels.remove(label)
+
+            # removing state will remove related transitions
+            if state in self.trans:
+                next_states = self.trans.pop(state)
+                for next_state in next_states:
+                    self.trans_inverted[next_state].remove(state)
+            if state in self.trans_inverted:
+                prev_states = self.trans_inverted.pop(state)
+                for prev_state in prev_states:
+                    self.trans[prev_state].remove(state)
 
 
     def remove_states(self, states: List[str]):
@@ -77,7 +87,7 @@ class KripkeStruct:
 
 
     def get_states(self):
-        return dict(self.states)
+        return self.states
 
 
     def set_starts(self, starts: List[str]):
@@ -94,7 +104,11 @@ class KripkeStruct:
 
     def add_trans(self, trans: Dict[str, List[str]]):
         for state, next_states in trans.items():
+            if state not in self.states:
+                raise Exception("Can't add Transition from a Non-Exisiting State")
             for next_state in next_states:
+                if next_state not in self.states:
+                    raise Exception("Can't add Transition to a Non-Exisiting State")
                 self.trans[state].append(next_state)
                 self.trans_inverted[next_state].append(state)
 
@@ -102,9 +116,14 @@ class KripkeStruct:
     def remove_trans(self, trans: Dict[str, List[str]]):
         for state, next_states in trans.items():
             for next_state in next_states:
-                self.trans[state].remove(next_state)
-                self.trans_inverted[next_state].remove(state)
+                if state in self.states and next_state in self.trans[state]:
+                    self.trans[state].remove(next_state)
+                    self.trans_inverted[next_state].remove(state)
 
 
     def get_trans(self):
         return dict(self.trans)
+    
+    
+    def get_tran_inverted(self):
+        return dict(self.trans_inverted)

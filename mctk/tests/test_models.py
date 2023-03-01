@@ -24,7 +24,7 @@ def test_ks_file_init():
                "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
                "Starts": ("s1",),
                "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]}
-               }
+              }
     ks = KripkeStruct(ks_json)
 
     assert ks.atoms == ("a", "b", "c", "d")
@@ -39,7 +39,7 @@ def test_ks_str_rep():
                "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
                "Starts": ("s1",),
                "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]}
-               }
+              }
     ks = KripkeStruct(ks_json)
     assert str(ks) == ("Atoms: ('a', 'b', 'c', 'd')\n" +
                        "States: {'s1': 8, 's2': 12, 's3': 6, 's4': 7}\n" +
@@ -123,7 +123,7 @@ def test_ks_remove_state():
               "s5": 0b0100,  # s5 has label "b"
               "s6": 0b0010,  # s6 has label "c"
               "s7": 0b0001,  # s7 has label "d"
-            }
+             }
     ks.add_states(states)
     ks.remove_state("s7")
     states.pop("s7")
@@ -145,7 +145,7 @@ def test_ks_remove_states():
               "s5": 0b0100,  # s5 has label "b"
               "s6": 0b0010,  # s6 has label "c"
               "s7": 0b0001,  # s7 has label "d"
-            }
+             }
     ks.add_states(states)
     ks.remove_states(["s6", "s7"])
     states.pop("s7")
@@ -161,7 +161,7 @@ def test_ks_set_starts():
               "s2": 0b1100,  # s2 has labels "a", "b"
               "s3": 0b0110,  # s3 has labels "b", "c"
               "s4": 0b0111,  # s4 has labels "b", "c", "d"
-            }
+             }
     ks.add_states(states)
 
     starts = ["s1", "s4"]
@@ -187,7 +187,7 @@ def test_ks_get_starts():
               "s2": 0b1100,  # s2 has labels "a", "b"
               "s3": 0b0110,  # s3 has labels "b", "c"
               "s4": 0b0111,  # s4 has labels "b", "c", "d"
-            }
+             }
     ks.add_states(states)
 
     starts = ["s1", "s4"]
@@ -203,7 +203,7 @@ def test_ks_add_trans():
               "s2": 0b1100,  # s2 has labels "a", "b"
               "s3": 0b0110,  # s3 has labels "b", "c"
               "s4": 0b0111,  # s4 has labels "b", "c", "d"
-            }
+             }
     ks.add_states(states)
     ks.set_starts(["s1"])
 
@@ -236,7 +236,7 @@ def test_ks_get_trans():
               "s2": 0b1100,  # s2 has labels "a", "b"
               "s3": 0b0110,  # s3 has labels "b", "c"
               "s4": 0b0111,  # s4 has labels "b", "c", "d"
-            }
+             }
     ks.add_states(states)
     ks.set_starts(["s1"])
     trans = {"s1": ["s2"],        # a -> ab
@@ -245,7 +245,8 @@ def test_ks_get_trans():
              "s4": ["s2"]         # bcd -> ab
             }
     ks.add_trans(trans)
-    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4", "s1"], "s4": ["s2"]}
+    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3", "s4"],
+                              "s3": ["s4", "s1"], "s4": ["s2"]}
 
 
 def test_ks_get_trans_inverted():
@@ -291,12 +292,14 @@ def test_ks_remove_trans():
              "s4": ["s2"]
             }
     ks.remove_trans(trans)
-    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"], "s3": ["s4", "s1"], "s4": []}
+    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"],
+                              "s3": ["s4", "s1"], "s4": []}
 
     # removing non-existing transition won't have any effect
     trans = {"s2": ["s4"]}
     ks.remove_trans(trans)
-    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"], "s3": ["s4", "s1"], "s4": []}
+    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"],
+                              "s3": ["s4", "s1"], "s4": []}
 
 
 # removing state will remove related transitions

@@ -79,7 +79,7 @@ publish:  # Upload python assets
 #########
 # CLEAN #
 #########
-clean: ## clean everything from the repository
+clean-deep: ## clean everything untracked from the repository
 	git clean -fdx
 
 clean-linux: ## clean the repository

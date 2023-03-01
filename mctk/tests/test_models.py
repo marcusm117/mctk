@@ -1,7 +1,9 @@
-import pytest
+# import standard libraries
 from collections import defaultdict
-from unittest.mock import patch
-from mctk.models import *
+
+# import external libraries
+import pytest
+from mctk.models import KripkeStruct
 
 
 
@@ -96,7 +98,7 @@ def test_ks_add_states():
               "s5": 0b0100,  # s5 has label "b"
               "s6": 0b0010,  # s6 has label "c"
               "s7": 0b0001,  # s7 has label "d"
-            }
+             }
     ks.add_states(states)
     assert ks.states == states
 
@@ -205,23 +207,23 @@ def test_ks_add_trans():
     ks.add_states(states)
     ks.set_starts(["s1"])
 
-    trans = {"s1" : ["s2"],        # a -> ab
-             "s2" : ["s3", "s4"],        # ab -> bc
-             "s3" : ["s4", "s1"],  # bc -> bcd, a
-             "s4" : ["s2"]         # bcd -> ab
+    trans = {"s1": ["s2"],        # a -> ab
+             "s2": ["s3", "s4"],        # ab -> bc
+             "s3": ["s4", "s1"],  # bc -> bcd, a
+             "s4": ["s2"]         # bcd -> ab
             }
     ks.add_trans(trans)
     assert trans == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4", "s1"], "s4": ["s2"]}
 
     # if source state doesn't exist, can't add transition from it
     with pytest.raises(Exception) as error_info:
-        trans = {"s7" : ["s1"]}
+        trans = {"s7": ["s1"]}
         ks.add_trans(trans)
     assert str(error_info.value) == "Can't add Transition from a Non-Exisiting Source State"
-   
+
     # if target state doesn't exist, can't add transition to it
     with pytest.raises(Exception) as error_info:
-        trans = {"s1" : ["s7"]}
+        trans = {"s1": ["s7"]}
         ks.add_trans(trans)
     assert str(error_info.value) == "Can't add Transition to a Non-Exisiting Target State"
 
@@ -237,10 +239,10 @@ def test_ks_get_trans():
             }
     ks.add_states(states)
     ks.set_starts(["s1"])
-    trans = {"s1" : ["s2"],        # a -> ab
-             "s2" : ["s3", "s4"],        # ab -> bc
-             "s3" : ["s4", "s1"],  # bc -> bcd, a
-             "s4" : ["s2"]         # bcd -> ab
+    trans = {"s1": ["s2"],        # a -> ab
+             "s2": ["s3", "s4"],        # ab -> bc
+             "s3": ["s4", "s1"],  # bc -> bcd, a
+             "s4": ["s2"]         # bcd -> ab
             }
     ks.add_trans(trans)
     assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4", "s1"], "s4": ["s2"]}
@@ -257,13 +259,14 @@ def test_ks_get_trans_inverted():
             }
     ks.add_states(states)
     ks.set_starts(["s1"])
-    trans = {"s1" : ["s2"],        # a -> ab
-             "s2" : ["s3", "s4"],        # ab -> bc
-             "s3" : ["s4", "s1"],  # bc -> bcd, a
-             "s4" : ["s2"]         # bcd -> ab
+    trans = {"s1": ["s2"],        # a -> ab
+             "s2": ["s3", "s4"],        # ab -> bc
+             "s3": ["s4", "s1"],  # bc -> bcd, a
+             "s4": ["s2"]         # bcd -> ab
             }
     ks.add_trans(trans)
-    assert ks.get_trans_inverted() == {"s1": ["s3"], "s2": ["s1", "s4"], "s3": ["s2"], "s4": ["s2", "s3"]}
+    assert ks.get_trans_inverted() == {"s1": ["s3"], "s2": ["s1", "s4"],
+                                       "s3": ["s2"], "s4": ["s2", "s3"]}
 
 
 def test_ks_remove_trans():
@@ -277,21 +280,21 @@ def test_ks_remove_trans():
             }
     ks.add_states(states)
     ks.set_starts(["s1"])
-    trans = {"s1" : ["s2"],        # a -> ab
-             "s2" : ["s3", "s4"],        # ab -> bc
-             "s3" : ["s4", "s1"],  # bc -> bcd, a
-             "s4" : ["s2"]         # bcd -> ab
+    trans = {"s1": ["s2"],        # a -> ab
+             "s2": ["s3", "s4"],        # ab -> bc
+             "s3": ["s4", "s1"],  # bc -> bcd, a
+             "s4": ["s2"]         # bcd -> ab
             }
     ks.add_trans(trans)
 
-    trans = {"s2" : ["s4"],
-             "s4" : ["s2"]
+    trans = {"s2": ["s4"],
+             "s4": ["s2"]
             }
     ks.remove_trans(trans)
     assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"], "s3": ["s4", "s1"], "s4": []}
 
     # removing non-existing transition won't have any effect
-    trans = {"s2" : ["s4"]}
+    trans = {"s2": ["s4"]}
     ks.remove_trans(trans)
     assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"], "s3": ["s4", "s1"], "s4": []}
 
@@ -305,13 +308,13 @@ def test_ks_remove_states_will_remove_related_trans():
               "s2": 0b1100,  # s2 has labels "a", "b"
               "s3": 0b0110,  # s3 has labels "b", "c"
               "s4": 0b0111,  # s4 has labels "b", "c", "d"
-            }
+             }
     ks.add_states(states)
     ks.set_starts(["s1"])
-    trans = {"s1" : ["s2"],        # a -> ab
-             "s2" : ["s3", "s4"],        # ab -> bc
-             "s3" : ["s4", "s1"],  # bc -> bcd, a
-             "s4" : ["s2"]         # bcd -> ab
+    trans = {"s1": ["s2"],        # a -> ab
+             "s2": ["s3", "s4"],        # ab -> bc
+             "s3": ["s4", "s1"],  # bc -> bcd, a
+             "s4": ["s2"]         # bcd -> ab
             }
     ks.add_trans(trans)
 

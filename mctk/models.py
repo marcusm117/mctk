@@ -63,8 +63,7 @@ class KripkeStruct:
 
     def remove_state(self, state: str):
         if state in self.states:
-            label = self.states.pop(state)
-
+            self.states.pop(state)
             # removing state will remove related transitions
             if state in self.trans:
                 next_states = self.trans.pop(state)

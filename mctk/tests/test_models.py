@@ -1,7 +1,6 @@
-from mctk.models import *
 from collections import defaultdict
 import json
-
+from mctk.models import *
 
 
 
@@ -81,13 +80,14 @@ def test_ks_add_states():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s2": 0b1100,     # s2 has labels "a", "b"
-              "s3": 0b0110,     # s3 has labels "b", "c"
-              "s4": 0b0111,     # s4 has labels "b", "c", "d"
-              "s5": 0b0100,     # s5 has label "b"
-              "s6": 0b0010,     # s6 has label "c"
-              "s7": 0b0001      # s7 has label "d"
-              }
+    states = {
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+        "s5": 0b0100,  # s5 has label "b"
+        "s6": 0b0010,  # s6 has label "c"
+        "s7": 0b0001,  # s7 has label "d"
+    }
     ks.add_states(states)
     assert ks.states == states
 
@@ -106,14 +106,15 @@ def test_ks_remove_state():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,     # s1 has labels "a"
-              "s2": 0b1100,     # s2 has labels "a", "b"
-              "s3": 0b0110,     # s3 has labels "b", "c"
-              "s4": 0b0111,     # s4 has labels "b", "c", "d"
-              "s5": 0b0100,     # s5 has label "b"
-              "s6": 0b0010,     # s6 has label "c"
-              "s7": 0b0001      # s7 has label "d"
-              }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+        "s5": 0b0100,  # s5 has label "b"
+        "s6": 0b0010,  # s6 has label "c"
+        "s7": 0b0001,  # s7 has label "d"
+    }
     ks.add_states(states)
     ks.remove_state("s7")
     states.pop("s7")
@@ -125,14 +126,15 @@ def test_ks_remove_states():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,     # s1 has labels "a"
-              "s2": 0b1100,     # s2 has labels "a", "b"
-              "s3": 0b0110,     # s3 has labels "b", "c"
-              "s4": 0b0111,     # s4 has labels "b", "c", "d"
-              "s5": 0b0100,     # s5 has label "b"
-              "s6": 0b0010,     # s6 has label "c"
-              "s7": 0b0001      # s7 has label "d"
-              }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+        "s5": 0b0100,  # s5 has label "b"
+        "s6": 0b0010,  # s6 has label "c"
+        "s7": 0b0001,  # s7 has label "d"
+    }
     ks.add_states(states)
     ks.remove_states(["s6", "s7"])
     states.pop("s7")

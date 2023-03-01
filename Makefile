@@ -79,10 +79,10 @@ publish:  # Upload python assets
 #########
 # CLEAN #
 #########
-deep-clean: ## clean everything from the repository
+clean: ## clean everything from the repository
 	git clean -fdx
 
-clean: ## clean the repository
+clean-linux: ## clean the repository
 	rm -rf .coverage coverage cover htmlcov logs build dist *.egg-info .pytest_cache
 
 ############################################################################################

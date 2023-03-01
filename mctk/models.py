@@ -30,13 +30,19 @@ class KripkeStruct:
             self.starts = ()
             self.trans = defaultdict(list)
             self.trans_inverted = defaultdict(list)
-                 
+
 
     def __str__(self) -> str:
-        return "Atoms: " + str(self.atoms) +\
-               "States: " + str(self.states) +\
-               "Starts: " + str(self.starts) +\
-               "Trans: " + str(self.trans)
+        return (
+            "Atoms: "
+            + str(self.atoms)
+            + "States: "
+            + str(self.states)
+            + "Starts: "
+            + str(self.starts)
+            + "Trans: "
+            + str(self.trans)
+        )
 
 
     def set_atoms(self, atoms: List[str]):
@@ -52,7 +58,7 @@ class KripkeStruct:
 
 
     def add_state(self, state: str, label: int):
-        # if the state or the label exisits already, can't add again
+        # if the state or the label exisits, can't add again
         if state in self.states:
             raise Exception("Can't add an Exisiting State Name again")
         elif label in self.states_labels:
@@ -93,8 +99,8 @@ class KripkeStruct:
 
 
     def set_starts(self, starts: List[str]):
-        # if start state doesn't exist, can't set it
         for start in starts:
+            # if start state doesn't exist, can't set it
             if start not in self.states:
                 raise Exception("Can't set a Non-Exisiting State as Start State")
         self.starts = tuple(starts)
@@ -106,11 +112,14 @@ class KripkeStruct:
 
     def add_trans(self, trans: Dict[str, List[str]]):
         for state, next_states in trans.items():
+            # if source state doesn't exist, can't add transition
             if state not in self.states:
-                raise Exception("Can't add Transition from a Non-Exisiting State")
+                raise Exception("Can't add Transition from a Non-Exisiting Source State")
+
             for next_state in next_states:
+                # if target state doesn't exist, can't add transition
                 if next_state not in self.states:
-                    raise Exception("Can't add Transition to a Non-Exisiting State")
+                    raise Exception("Can't add Transition to a Non-Exisiting Target State")
                 self.trans[state].append(next_state)
                 self.trans_inverted[next_state].append(state)
 

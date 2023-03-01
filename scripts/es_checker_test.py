@@ -143,8 +143,8 @@ def runtime_creation_test():
     model_2.remove_state("s2")
     print(model_2.get_trans())
     assert(model_2.get_trans() == {'s1': [], 's3': ['s4', 's1'], 's4': []})
-    print(model_2.get_tran_inverted())
-    assert(model_2.get_tran_inverted() == {'s3': [], 's4': ['s3'], 's1': ['s3']})
+    print(model_2.get_trans_inverted())
+    assert(model_2.get_trans_inverted() == {'s3': [], 's4': ['s3'], 's1': ['s3']})
 
 
     print("Congrats! All Runtime Creation Tests are Passed!")

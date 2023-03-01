@@ -1,13 +1,15 @@
 # Authors: marcusm117
 # License: AGPL v3.0
 
-from typing import List, DefaultDict, Dict, Set, Tuple
+from typing import List, Dict
 from collections import defaultdict
+
+
 
 
 class KripkeStruct:
     def __init__(self, model_json=None):
-        if model_json != None:
+        if model_json is not None:
             self.atoms = tuple(model_json["atoms"])
 
             self.states = model_json["states"]
@@ -28,13 +30,13 @@ class KripkeStruct:
             self.starts = ()
             self.trans = defaultdict(list)
             self.trans_inverted = defaultdict(list)
-    
+                 
 
     def __str__(self) -> str:
         return "Atoms: " + str(self.atoms) +\
                "States: " + str(self.states) +\
                "Starts: " + str(self.starts) +\
-               "Trans: " + str(self.trans)    
+               "Trans: " + str(self.trans)
 
 
     def set_atoms(self, atoms: List[str]):
@@ -65,6 +67,10 @@ class KripkeStruct:
             self.add_state(state, label)
 
 
+    def get_states(self):
+        return self.states
+
+
     def remove_state(self, state: str):
         if state in self.states:
             label = self.states.pop(state)
@@ -84,10 +90,6 @@ class KripkeStruct:
     def remove_states(self, states: List[str]):
         for state in states:
             self.remove_state(state)
-
-
-    def get_states(self):
-        return self.states
 
 
     def set_starts(self, starts: List[str]):
@@ -123,7 +125,7 @@ class KripkeStruct:
 
     def get_trans(self):
         return dict(self.trans)
-    
-    
+
+
     def get_tran_inverted(self):
         return dict(self.trans_inverted)

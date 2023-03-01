@@ -14,7 +14,7 @@ def load_creation_test():
     model_path = "./model.json"
     with open(model_path, "r") as f:
         model_json = json.load(f)
-    model_1 = mctk.ExplicitStateChecker(model_json)
+    model_1 = mctk.KripkeStruct(model_json)
     '''
 
 

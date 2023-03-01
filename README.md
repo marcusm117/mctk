@@ -2,9 +2,8 @@
 
 ![GitHub](https://img.shields.io/badge/License-AGPLv3-green) ![GitHub](https://img.shields.io/github/issues/marcusm117/FV_mctk?color=red&label=Issues)
 
-Model Checking Toolkit for Python.
+Model Checking Toolkit in Python.
 
-Run Script `es_checker_test.py` for Testing. 
 
 ## Overview
 
@@ -12,3 +11,35 @@ Run Script `es_checker_test.py` for Testing.
 
 Users can create checker instances to formally verify if a Kripke Structure (can be created during runtime or input in a JSON file) satisfies certain CTL properties. The checker instance will return "SAT" if satisfied and an Error Trace if unsatisfied.
 
+
+## Getting Started
+### Installation
+- `git clone https://github.com/marcusm117/mctk.git`
+
+
+### Building, Testing, & Linting
+- `make develop`: install and build this library and its dependencies using `pip`
+- `make build`: build the library using `setuptools`
+- `make lint`: perform static analysis of this library with `flake8` and `black`
+- `make annotate`: run type checking using `mypy`
+- `make test`: run automated tests with `pytest`
+- `make coverage`: run automated tests with `pytest` and collect coverage information
+
+
+## Contributing
+
+1. **[Optional]** Open a New Issue
+2. Fork this Repository to your Github
+3. Clone your Fork to your Local Environment
+   
+   `git clone https://github.com/[YOUR USERNAME]/mctk.git`
+4. Create a New Branch for an Open Issue
+   
+   `git checkout -b MCTK-[ISSUE NUMBER])`
+5. Commit your Changes
+   
+   `git commit -m "meaningful commit message"`
+6. Push to the Branch to your Fork
+   
+   `git push origin MCTK-[ISSUE NUMBER])`
+7. Open a Pull Request against this Repository

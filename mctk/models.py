@@ -9,40 +9,25 @@ from collections import defaultdict
 
 class KripkeStruct:
     def __init__(self, model_json=None):
+        self.atoms = ()
+        self.states = {}
+        self.starts = ()
+        self.trans = defaultdict(list)
+        self.trans_inverted = defaultdict(list)
+
         if model_json is not None:
-            self.atoms = tuple(model_json["atoms"])
-
-            self.states = model_json["states"]
-            self.states_labels = set()
-            for label in self.states.values():
-                self.states_labels.add(label)
-            self.starts = model_json["starts"]
-
-            self.trans = defaultdict(list, model_json["trans"])
-            self.trans_inverted = defaultdict(list)
-            for state, next_states in self.trans.items():
-                for next_state in next_states:
-                    self.trans_inverted[next_state].append(state)
-        else:
-            self.atoms = ()
-            self.states = {}
-            self.states_labels = set()
-            self.starts = ()
-            self.trans = defaultdict(list)
-            self.trans_inverted = defaultdict(list)
+            self.set_atoms(model_json["Atoms"])
+            self.add_states(model_json["States"])
+            self.set_starts(model_json["Starts"])
+            self.add_trans(model_json["Trans"])
 
 
     def __str__(self) -> str:
-        return (
-            "Atoms: "
-            + str(self.atoms)
-            + "States: "
-            + str(self.states)
-            + "Starts: "
-            + str(self.starts)
-            + "Trans: "
-            + str(self.trans)
-        )
+        return (f"Atoms: {self.atoms}\n" +
+                f"States: {self.states}\n" +
+                f"Starts: {self.starts}\n" +
+                f"Trans: {dict(self.trans)}"
+                )
 
 
     def set_atoms(self, atoms: List[str]):
@@ -61,11 +46,10 @@ class KripkeStruct:
         # if the state or the label exisits, can't add again
         if state in self.states:
             raise Exception("Can't add an Exisiting State Name again")
-        elif label in self.states_labels:
+        elif label in self.states.values():
             raise Exception("Can't add an Exisiting State Label again")
         else:
             self.states[state] = label
-            self.states_labels.add(label)
 
 
     def add_states(self, states: Dict[str, int]):
@@ -80,7 +64,6 @@ class KripkeStruct:
     def remove_state(self, state: str):
         if state in self.states:
             label = self.states.pop(state)
-            self.states_labels.remove(label)
 
             # removing state will remove related transitions
             if state in self.trans:
@@ -124,17 +107,17 @@ class KripkeStruct:
                 self.trans_inverted[next_state].append(state)
 
 
+    def get_trans(self):
+        return dict(self.trans)
+
+
+    def get_trans_inverted(self):
+        return dict(self.trans_inverted)
+
+
     def remove_trans(self, trans: Dict[str, List[str]]):
         for state, next_states in trans.items():
             for next_state in next_states:
                 if state in self.states and next_state in self.trans[state]:
                     self.trans[state].remove(next_state)
                     self.trans_inverted[next_state].remove(state)
-
-
-    def get_trans(self):
-        return dict(self.trans)
-
-
-    def get_tran_inverted(self):
-        return dict(self.trans_inverted)

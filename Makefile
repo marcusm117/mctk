@@ -46,6 +46,7 @@ coverage:  ## clean and run unit tests with coverage
 
 # Alias
 tests: test
+cov: coverage
 
 ###########
 # VERSION #

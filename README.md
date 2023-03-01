@@ -27,7 +27,7 @@ Users can create checker instances to formally verify if a Kripke Structure (can
    make install
    ```
 
-### Linting, & Testing
+### Linting & Testing
 - `make lint`: perform static analysis of this library with `flake8` and `black`
 - `make annotate`: run type checking using `mypy`
 - `make test`: run automated tests with `pytest`

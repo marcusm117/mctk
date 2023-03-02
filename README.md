@@ -18,17 +18,14 @@ Users can create checker instances to formally verify if a Kripke Structure (can
    ``` bash
    git clone https://github.com/[YOUR USERNAME]/mctk.git
    ```
-2. Build the Library
+2. Install the Library with all Dependencies
    ``` bash
-   make build
-   ```
-3. Install the Library
-   ``` bash
-   make install
+   make develop
    ```
 
+
 ### Linting & Testing
-- `make lint`: perform static analysis of this library with `flake8` and `black`
+- `make lint`: perform static analysis of this library with `black`, `flake8` and `pylint`
 - `make annotate`: run type checking using `mypy`
 - `make test`: run automated tests with `pytest`
 - `make coverage`: run automated tests with `pytest` and collect coverage information

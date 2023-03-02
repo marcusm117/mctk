@@ -14,7 +14,7 @@ def load_creation_test():
     model_path = "./model.json"
     with open(model_path, "r") as f:
         model_json = json.load(f)
-    model_1 = mctk.ExplicitStateChecker(model_json)
+    model_1 = mctk.KripkeStruct(model_json)
     '''
 
 
@@ -90,7 +90,7 @@ def runtime_creation_test():
     print(starts)
     assert(starts == ['s1'])
 
-    # setting non-exxisiting state as start state is invalid
+    # setting non-exisiting state as start state is invalid
     try:
         model_2.set_starts(["s5"])
     except:
@@ -109,6 +109,9 @@ def runtime_creation_test():
     trans = model_2.get_trans()
     print(trans)
     assert(trans == {'s1': ['s2'], 's2': ['s3', 's4'], 's3': ['s4', 's1'], 's4': ['s2']})
+
+    # test string representation
+    print(model_2)
 
     # adding transitions from/to a non-exisiting State is invalid
     try:
@@ -140,8 +143,8 @@ def runtime_creation_test():
     model_2.remove_state("s2")
     print(model_2.get_trans())
     assert(model_2.get_trans() == {'s1': [], 's3': ['s4', 's1'], 's4': []})
-    print(model_2.get_tran_inverted())
-    assert(model_2.get_tran_inverted() == {'s3': [], 's4': ['s3'], 's1': ['s3']})
+    print(model_2.get_trans_inverted())
+    assert(model_2.get_trans_inverted() == {'s3': [], 's4': ['s3'], 's1': ['s3']})
 
 
     print("Congrats! All Runtime Creation Tests are Passed!")

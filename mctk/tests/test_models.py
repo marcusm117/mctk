@@ -1,8 +1,13 @@
-# import standard libraries
+# Authors: marcusm117
+# License: AGPL v3.0
+
+# standard libraries
 from collections import defaultdict
 
-# import external libraries
+# external libraries
 import pytest
+
+# module to be tested
 from mctk.models import KripkeStruct
 
 

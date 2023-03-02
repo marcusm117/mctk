@@ -10,12 +10,14 @@ build:  ## build the python library
 install:  ## install library
 	python -m pip install .
 
+
 #########
 # LINTS #
 #########
-lint:  ## run static analysis with flake8
+lint:  ## run static analysis with black, flake8, and pylint
 	python -m black --check mctk setup.py
-	python -m flake8 mctk setup.py
+	python -m flake8 --max-line-length 120 mctk setup.py
+	python -m pylint --disable=C0301,C0114,C0115,C0116,R1720 mctk setup.py
 
 # Alias
 lints: lint
@@ -35,6 +37,7 @@ checks: check
 annotate:  ## run type checking
 	python -m mypy ./mctk
 
+
 #########
 # TESTS #
 #########
@@ -47,6 +50,7 @@ coverage:  ## clean and run unit tests with coverage
 # Alias
 tests: test
 cov: coverage
+
 
 ###########
 # VERSION #
@@ -63,6 +67,7 @@ minor:
 major:
 	bump2version major
 
+
 ########
 # DIST #
 ########
@@ -77,6 +82,7 @@ dist: clean build dist-build dist-check  ## Build dists
 publish:  # Upload python assets
 	echo "would usually run python -m twine upload dist/* --skip-existing"
 
+
 #########
 # CLEAN #
 #########
@@ -86,7 +92,9 @@ clean-deep: ## clean everything untracked from the repository
 clean-linux: ## clean the repository
 	rm -rf .coverage coverage cover htmlcov logs build dist *.egg-info .pytest_cache
 
+
 ############################################################################################
+
 
 # Thanks to Francoise at marmelab.com for this
 .DEFAULT_GOAL := help
@@ -96,4 +104,4 @@ help:
 print-%:
 	@echo '$*=$($*)'
 
-.PHONY: develop build install lint lints format fix check checks annotate test coverage show-coverage tests show-version patch minor major dist-build dist-check dist publish deep-clean clean help
+.PHONY: develop build install lint lints format fix check checks annotate test cov coverage tests show-version patch minor major dist-build dist-check dist publish clean-deep clean-linux help

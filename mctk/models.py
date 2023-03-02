@@ -5,6 +5,8 @@ from typing import List, Dict
 from collections import defaultdict
 
 
+class KripkeStructException(Exception):
+    pass
 
 
 class KripkeStruct:
@@ -21,45 +23,39 @@ class KripkeStruct:
             self.set_starts(model_json["Starts"])
             self.add_trans(model_json["Trans"])
 
-
     def __str__(self) -> str:
-        return (f"Atoms: {self.atoms}\n" +
-                f"States: {self.states}\n" +
-                f"Starts: {self.starts}\n" +
-                f"Trans: {dict(self.trans)}"
-                )
-
+        return (
+            f"Atoms: {self.atoms}\n"
+            + f"States: {self.states}\n"
+            + f"Starts: {self.starts}\n"
+            + f"Trans: {dict(self.trans)}"
+        )
 
     def set_atoms(self, atoms: List[str]):
         # if any state exists, can't reset atoms
         if self.states:
-            raise Exception("Can't reset Atoms after States are Created")
+            raise KripkeStructException("Can't reset Atoms after States are Created")
         else:
             self.atoms = tuple(atoms)
-
 
     def get_atoms(self):
         return list(self.atoms)
 
-
     def add_state(self, state: str, label: int):
         # if the state or the label exisits, can't add again
         if state in self.states:
-            raise Exception("Can't add an Exisiting State Name again")
+            raise KripkeStructException("Can't add an Exisiting State Name again")
         elif label in self.states.values():
-            raise Exception("Can't add an Exisiting State Label again")
+            raise KripkeStructException("Can't add an Exisiting State Label again")
         else:
             self.states[state] = label
-
 
     def add_states(self, states: Dict[str, int]):
         for state, label in states.items():
             self.add_state(state, label)
 
-
     def get_states(self):
         return self.states
-
 
     def remove_state(self, state: str):
         if state in self.states:
@@ -74,45 +70,38 @@ class KripkeStruct:
                 for prev_state in prev_states:
                     self.trans[prev_state].remove(state)
 
-
     def remove_states(self, states: List[str]):
         for state in states:
             self.remove_state(state)
-
 
     def set_starts(self, starts: List[str]):
         for start in starts:
             # if start state doesn't exist, can't set it
             if start not in self.states:
-                raise Exception("Can't set a Non-Exisiting State as Start State")
+                raise KripkeStructException("Can't set a Non-Exisiting State as Start State")
         self.starts = tuple(starts)
-
 
     def get_starts(self):
         return list(self.starts)
-
 
     def add_trans(self, trans: Dict[str, List[str]]):
         for state, next_states in trans.items():
             # if source state doesn't exist, can't add transition
             if state not in self.states:
-                raise Exception("Can't add Transition from a Non-Exisiting Source State")
+                raise KripkeStructException("Can't add Transition from a Non-Exisiting Source State")
 
             for next_state in next_states:
                 # if target state doesn't exist, can't add transition
                 if next_state not in self.states:
-                    raise Exception("Can't add Transition to a Non-Exisiting Target State")
+                    raise KripkeStructException("Can't add Transition to a Non-Exisiting Target State")
                 self.trans[state].append(next_state)
                 self.trans_inverted[next_state].append(state)
-
 
     def get_trans(self):
         return dict(self.trans)
 
-
     def get_trans_inverted(self):
         return dict(self.trans_inverted)
-
 
     def remove_trans(self, trans: Dict[str, List[str]]):
         for state, next_states in trans.items():

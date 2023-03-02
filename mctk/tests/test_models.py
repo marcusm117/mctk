@@ -8,9 +8,7 @@ from collections import defaultdict
 import pytest
 
 # module to be tested
-from mctk.models import KripkeStruct
-
-
+from mctk import KripkeStruct
 
 
 # test KripkeStruct()
@@ -25,11 +23,12 @@ def test_ks_default_init():
 
 # test KripkeStruct(ks_json)
 def test_ks_file_init():
-    ks_json = {"Atoms": ("a", "b", "c", "d"),
-               "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
-               "Starts": ("s1",),
-               "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]}
-              }
+    ks_json = {
+        "Atoms": ("a", "b", "c", "d"),
+        "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
+        "Starts": ("s1",),
+        "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]},
+    }
     ks = KripkeStruct(ks_json)
 
     assert ks.atoms == ("a", "b", "c", "d")
@@ -40,17 +39,19 @@ def test_ks_file_init():
 
 # test ks.__str__()
 def test_ks_str_rep():
-    ks_json = {"Atoms": ("a", "b", "c", "d"),
-               "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
-               "Starts": ("s1",),
-               "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]}
-              }
+    ks_json = {
+        "Atoms": ("a", "b", "c", "d"),
+        "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
+        "Starts": ("s1",),
+        "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]},
+    }
     ks = KripkeStruct(ks_json)
-    assert str(ks) == ("Atoms: ('a', 'b', 'c', 'd')\n" +
-                       "States: {'s1': 8, 's2': 12, 's3': 6, 's4': 7}\n" +
-                       "Starts: ('s1',)\n" +
-                       "Trans: {'s1': ['s2'], 's2': ['s3', 's4'], 's3': ['s4']}"
-                      )
+    assert str(ks) == (
+        "Atoms: ('a', 'b', 'c', 'd')\n"
+        + "States: {'s1': 8, 's2': 12, 's3': 6, 's4': 7}\n"
+        + "Starts: ('s1',)\n"
+        + "Trans: {'s1': ['s2'], 's2': ['s3', 's4'], 's3': ['s4']}"
+    )
 
 
 def test_ks_set_atoms():
@@ -96,14 +97,15 @@ def test_ks_add_states():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-              "s5": 0b0100,  # s5 has label "b"
-              "s6": 0b0010,  # s6 has label "c"
-              "s7": 0b0001,  # s7 has label "d"
-             }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+        "s5": 0b0100,  # s5 has label "b"
+        "s6": 0b0010,  # s6 has label "c"
+        "s7": 0b0001,  # s7 has label "d"
+    }
     ks.add_states(states)
     assert ks.states == states
 
@@ -121,14 +123,15 @@ def test_ks_remove_state():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-              "s5": 0b0100,  # s5 has label "b"
-              "s6": 0b0010,  # s6 has label "c"
-              "s7": 0b0001,  # s7 has label "d"
-             }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+        "s5": 0b0100,  # s5 has label "b"
+        "s6": 0b0010,  # s6 has label "c"
+        "s7": 0b0001,  # s7 has label "d"
+    }
     ks.add_states(states)
     ks.remove_state("s7")
     states.pop("s7")
@@ -143,14 +146,15 @@ def test_ks_remove_states():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-              "s5": 0b0100,  # s5 has label "b"
-              "s6": 0b0010,  # s6 has label "c"
-              "s7": 0b0001,  # s7 has label "d"
-             }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+        "s5": 0b0100,  # s5 has label "b"
+        "s6": 0b0010,  # s6 has label "c"
+        "s7": 0b0001,  # s7 has label "d"
+    }
     ks.add_states(states)
     ks.remove_states(["s6", "s7"])
     states.pop("s7")
@@ -162,11 +166,12 @@ def test_ks_set_starts():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-             }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+    }
     ks.add_states(states)
 
     starts = ["s1", "s4"]
@@ -188,11 +193,12 @@ def test_ks_get_starts():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-             }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+    }
     ks.add_states(states)
 
     starts = ["s1", "s4"]
@@ -204,19 +210,21 @@ def test_ks_add_trans():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-             }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+    }
     ks.add_states(states)
     ks.set_starts(["s1"])
 
-    trans = {"s1": ["s2"],        # a -> ab
-             "s2": ["s3", "s4"],        # ab -> bc
-             "s3": ["s4", "s1"],  # bc -> bcd, a
-             "s4": ["s2"]         # bcd -> ab
-            }
+    trans = {
+        "s1": ["s2"],  # a -> ab
+        "s2": ["s3", "s4"],  # ab -> bc
+        "s3": ["s4", "s1"],  # bc -> bcd, a
+        "s4": ["s2"],  # bcd -> ab
+    }
     ks.add_trans(trans)
     assert trans == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4", "s1"], "s4": ["s2"]}
 
@@ -237,74 +245,74 @@ def test_ks_get_trans():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-             }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+    }
     ks.add_states(states)
     ks.set_starts(["s1"])
-    trans = {"s1": ["s2"],        # a -> ab
-             "s2": ["s3", "s4"],        # ab -> bc
-             "s3": ["s4", "s1"],  # bc -> bcd, a
-             "s4": ["s2"]         # bcd -> ab
-            }
+    trans = {
+        "s1": ["s2"],  # a -> ab
+        "s2": ["s3", "s4"],  # ab -> bc
+        "s3": ["s4", "s1"],  # bc -> bcd, a
+        "s4": ["s2"],  # bcd -> ab
+    }
     ks.add_trans(trans)
-    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3", "s4"],
-                              "s3": ["s4", "s1"], "s4": ["s2"]}
+    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4", "s1"], "s4": ["s2"]}
 
 
 def test_ks_get_trans_inverted():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-            }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+    }
     ks.add_states(states)
     ks.set_starts(["s1"])
-    trans = {"s1": ["s2"],        # a -> ab
-             "s2": ["s3", "s4"],        # ab -> bc
-             "s3": ["s4", "s1"],  # bc -> bcd, a
-             "s4": ["s2"]         # bcd -> ab
-            }
+    trans = {
+        "s1": ["s2"],  # a -> ab
+        "s2": ["s3", "s4"],  # ab -> bc
+        "s3": ["s4", "s1"],  # bc -> bcd, a
+        "s4": ["s2"],  # bcd -> ab
+    }
     ks.add_trans(trans)
-    assert ks.get_trans_inverted() == {"s1": ["s3"], "s2": ["s1", "s4"],
-                                       "s3": ["s2"], "s4": ["s2", "s3"]}
+    assert ks.get_trans_inverted() == {"s1": ["s3"], "s2": ["s1", "s4"], "s3": ["s2"], "s4": ["s2", "s3"]}
 
 
 def test_ks_remove_trans():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-            }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+    }
     ks.add_states(states)
     ks.set_starts(["s1"])
-    trans = {"s1": ["s2"],        # a -> ab
-             "s2": ["s3", "s4"],        # ab -> bc
-             "s3": ["s4", "s1"],  # bc -> bcd, a
-             "s4": ["s2"]         # bcd -> ab
-            }
+    trans = {
+        "s1": ["s2"],  # a -> ab
+        "s2": ["s3", "s4"],  # ab -> bc
+        "s3": ["s4", "s1"],  # bc -> bcd, a
+        "s4": ["s2"],  # bcd -> ab
+    }
     ks.add_trans(trans)
 
-    trans = {"s2": ["s4"],
-             "s4": ["s2"]
-            }
+    trans = {"s2": ["s4"], "s4": ["s2"]}
     ks.remove_trans(trans)
-    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"],
-                              "s3": ["s4", "s1"], "s4": []}
+    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"], "s3": ["s4", "s1"], "s4": []}
 
     # removing non-existing transition won't have any effect
     trans = {"s2": ["s4"]}
     ks.remove_trans(trans)
-    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"],
-                              "s3": ["s4", "s1"], "s4": []}
+    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"], "s3": ["s4", "s1"], "s4": []}
 
 
 # removing state will remove related transitions
@@ -312,18 +320,20 @@ def test_ks_remove_states_will_remove_related_trans():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    states = {"s1": 0b1000,  # s1 has labels "a"
-              "s2": 0b1100,  # s2 has labels "a", "b"
-              "s3": 0b0110,  # s3 has labels "b", "c"
-              "s4": 0b0111,  # s4 has labels "b", "c", "d"
-             }
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+    }
     ks.add_states(states)
     ks.set_starts(["s1"])
-    trans = {"s1": ["s2"],        # a -> ab
-             "s2": ["s3", "s4"],        # ab -> bc
-             "s3": ["s4", "s1"],  # bc -> bcd, a
-             "s4": ["s2"]         # bcd -> ab
-            }
+    trans = {
+        "s1": ["s2"],  # a -> ab
+        "s2": ["s3", "s4"],  # ab -> bc
+        "s3": ["s4", "s1"],  # bc -> bcd, a
+        "s4": ["s2"],  # bcd -> ab
+    }
     ks.add_trans(trans)
 
     ks.remove_state("s2")

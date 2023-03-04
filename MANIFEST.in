@@ -2,14 +2,17 @@ graft mctk
 
 include LICENSE
 include README.md
-
+include CONTRIBUTING.md
 include .bumpversion.cfg
 include pyproject.toml
 include Makefile
 
+prune .vscode
 prune .github
+prune scripts
 exclude .gitignore
 exclude .gitattributes
+
 
 # Patterns to exclude from any directory
 global-exclude *~

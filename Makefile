@@ -1,7 +1,7 @@
 #########
 # BUILD #
 #########
-develop:  ## install dependencies and build library
+develop:  ## install dependencies and the library
 	python -m pip install -e .[develop]
 
 build:  ## build the python library
@@ -25,7 +25,7 @@ lints: lint
 format:  ## run autoformatting with black
 	python -m black mctk/ setup.py
 
-# alias
+# Alias
 fix: format
 
 check:  ## check assets for packaging
@@ -37,6 +37,9 @@ checks: check
 annotate:  ## run type checking
 	python -m mypy ./mctk
 
+# Alias
+type: annotate
+
 
 #########
 # TESTS #
@@ -44,11 +47,13 @@ annotate:  ## run type checking
 test: ## clean and run unit tests
 	python -m pytest -v mctk/tests
 
+# Alias
+tests: test
+
 coverage:  ## clean and run unit tests with coverage
 	python -m pytest -v mctk/tests --cov=mctk --cov-branch --cov-fail-under=75 --cov-report term-missing
 
 # Alias
-tests: test
 cov: coverage
 
 

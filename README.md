@@ -18,7 +18,11 @@ Users can create checker instances to formally verify if a Kripke Structure (can
    ``` bash
    git clone https://github.com/[YOUR USERNAME]/mctk.git
    ```
-2. Install the Library with all Dependencies
+2. Go into the Repository Directory
+   ``` bash
+   cd mctk
+   ```
+3. Install the Library with all Dependencies
    ``` bash
    make develop
    ```

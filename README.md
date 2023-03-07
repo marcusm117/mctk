@@ -16,7 +16,7 @@ Users can create checker instances to formally verify if a Kripke Structure (can
 ### Installation
 1. Clone this Repository to your Local Environment
    ``` bash
-   git clone https://github.com/[YOUR USERNAME]/mctk.git
+   git clone https://github.com/marcusm117/mctk.git
    ```
 2. Go into the Repository Directory
    ``` bash
@@ -41,7 +41,7 @@ Users can create checker instances to formally verify if a Kripke Structure (can
 2. Fork this Repository to your Github
 3. Clone your Fork to your Local Environment
    ```bash
-   git clone https://github.com/marcusm117/mctk.git
+   git clone https://github.com/[YOUR USERNAME]/mctk.git
    ```
 4. Create a New Branch for an Open Issue
    ```bash

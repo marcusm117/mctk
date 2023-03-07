@@ -51,7 +51,7 @@ test: ## clean and run unit tests
 tests: test
 
 coverage:  ## clean and run unit tests with coverage
-	python -m pytest -v mctk/tests --cov=mctk --cov-branch --cov-fail-under=75 --cov-report term-missing
+	python -m pytest -v mctk/tests --cov=mctk --cov-branch --cov-fail-under=75 --junitxml=python_junit.xml --cov-report term-missing
 
 # Alias
 cov: coverage

@@ -1,6 +1,6 @@
 # mctk
 
-[![Build Status](https://github.com/marcusm117/mctk/workflows/Build%20Status/badge.svg?branch=dev)](https://github.com/marcusm117/mctk/actions?query=workflow%3A%22Build+Status%22) [![codecov](https://codecov.io/gh/marcusm117/mctk/branch/dev/graph/badge.svg)](https://codecov.io/gh/marcusm117/mctk) ![License](https://img.shields.io/badge/License-AGPLv3-green) ![Issues](https://img.shields.io/github/issues/marcusm117/FV_mctk?color=red&label=Issues)
+[![Build Status](https://github.com/marcusm117/mctk/workflows/Build%20Status/badge.svg?branch=dev)](https://github.com/marcusm117/mctk/actions?query=workflow%3A%22Build+Status%22) [![codecov](https://codecov.io/gh/marcusm117/mctk/branch/dev/graph/badge.svg)](https://codecov.io/gh/marcusm117/mctk) [![License](https://img.shields.io/badge/License-Apache_2.0-green)](https://github.com/marcusm117/mctk/blob/dev/LICENSE) [![Issues](https://img.shields.io/github/issues/marcusm117/FV_mctk?color=red&label=Issues)](https://github.com/marcusm117/mctk/issues)
 
 Model Checking Toolkit in Python.
 

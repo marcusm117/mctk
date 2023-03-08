@@ -8,7 +8,7 @@ from collections import defaultdict
 import pytest
 
 # module to be tested
-from mctk import KripkeStruct
+from mctk import KripkeStruct, KripkeStructException
 
 
 # test KripkeStruct()
@@ -61,7 +61,7 @@ def test_ks_set_atoms():
     assert ks.atoms == ("a", "b", "c", "d")
 
     # if any state exists, can't reset atoms
-    with pytest.raises(Exception) as error_info:
+    with pytest.raises(KripkeStructException) as error_info:
         ks.add_state("s1", 0b1000)
         atoms = ["a"]
         ks.set_atoms(atoms)
@@ -83,12 +83,12 @@ def test_ks_add_state():
     assert ks.states == {"s1": 0b1000}
 
     # if the state name exists, can't add again
-    with pytest.raises(Exception) as error_info:
+    with pytest.raises(KripkeStructException) as error_info:
         ks.add_state("s1", 0b1111)
     assert str(error_info.value) == "Can't add an Exisiting State Name again"
 
     # if the state label exisits, can't add again
-    with pytest.raises(Exception) as error_info:
+    with pytest.raises(KripkeStructException) as error_info:
         ks.add_state("s8", 0b1000)
     assert str(error_info.value) == "Can't add an Exisiting State Label again"
 
@@ -184,7 +184,7 @@ def test_ks_set_starts():
     assert ks.starts == tuple(starts)
 
     # if state doesn't exist, can't set as start state
-    with pytest.raises(Exception) as error_info:
+    with pytest.raises(KripkeStructException) as error_info:
         ks.set_starts(["s5"])
     assert str(error_info.value) == "Can't set a Non-Exisiting State as Start State"
 
@@ -229,13 +229,13 @@ def test_ks_add_trans():
     assert trans == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4", "s1"], "s4": ["s2"]}
 
     # if source state doesn't exist, can't add transition from it
-    with pytest.raises(Exception) as error_info:
+    with pytest.raises(KripkeStructException) as error_info:
         trans = {"s7": ["s1"]}
         ks.add_trans(trans)
     assert str(error_info.value) == "Can't add Transition from a Non-Exisiting Source State"
 
     # if target state doesn't exist, can't add transition to it
-    with pytest.raises(Exception) as error_info:
+    with pytest.raises(KripkeStructException) as error_info:
         trans = {"s1": ["s7"]}
         ks.add_trans(trans)
     assert str(error_info.value) == "Can't add Transition to a Non-Exisiting Target State"

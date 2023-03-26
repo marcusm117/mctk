@@ -1,7 +1,7 @@
 # Authors: marcusm117
 # License: Apache 2.0
 
-from mctk import KripkeStruct, KripkeStructException
+from mctk import KripkeStruct, KripkeStructError
 
 
 def load_creation_test():
@@ -32,7 +32,7 @@ def runtime_creation_test():
     try:
         atoms = ["a"]
         model_2.set_atoms(atoms)
-    except KripkeStructException as error_info:
+    except KripkeStructError as error_info:
         print(error_info)
 
     # add states
@@ -49,11 +49,11 @@ def runtime_creation_test():
     # adding exisiting state names or labels is invalid
     try:
         model_2.add_state("s1", 0b1111)
-    except KripkeStructException as error_info:
+    except KripkeStructError as error_info:
         print(error_info)
     try:
         model_2.add_state("s8", 0b1000)
-    except KripkeStructException as error_info:
+    except KripkeStructError as error_info:
         print(error_info)
 
     # get current states
@@ -86,7 +86,7 @@ def runtime_creation_test():
     # setting non-exisiting state as start state is invalid
     try:
         model_2.set_starts(["s5"])
-    except KripkeStructException as error_info:
+    except KripkeStructError as error_info:
         print(error_info)
 
     # add transitions
@@ -110,12 +110,12 @@ def runtime_creation_test():
     try:
         trans = {"s1": ["s6"]}
         model_2.add_trans(trans)
-    except KripkeStructException as error_info:
+    except KripkeStructError as error_info:
         print(error_info)
     try:
         trans = {"s7": ["s1"]}
         model_2.add_trans(trans)
-    except KripkeStructException as error_info:
+    except KripkeStructError as error_info:
         print(error_info)
 
     # remove transitions

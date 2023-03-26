@@ -7,9 +7,9 @@ requires = [
 build-backend="setuptools.build_meta"
 
 [project]
-name = "mctk"
+name = "mctk-py"
 authors = [{name = "marcusm117", email = "marcusmin117@gmail.com"}]
-description="Model Checking Toolkit"
+description="Model Checking Toolkit for Python"
 readme = "README.md"
 version = "0.0.1"
 requires-python = ">=3.8"

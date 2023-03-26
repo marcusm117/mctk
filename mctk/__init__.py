@@ -1,5 +1,6 @@
-from .models import KripkeStruct
+from .models import KripkeStruct, KripkeStructError
 
 __all__ = [
     'KripkeStruct',
+    'KripkeStructError',
 ]

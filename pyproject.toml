@@ -12,7 +12,7 @@ authors = [{name = "marcusm117", email = "marcusmin117@gmail.com"}]
 description="Model Checking Toolkit"
 readme = "README.md"
 version = "0.0.1"
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 
 dependencies = []
 
@@ -21,7 +21,6 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
@@ -37,15 +36,15 @@ repository = "https://github.com/marcusm117/mctk"
 
 [project.optional-dependencies]
 develop = [
-    "black>=22",
+    "black>=23",
     "bump2version>=1.0.0",
     "check-manifest",
     "flake8>=3.7.8",
-    "flake8-black>=0.2.1",
+    "flake8-black>=0.3.1",
     "flake8-pyproject",
-    "pylint>=2.16.0",
+    "pylint>=2.17.0",
     "mypy",
-    "pytest>=4.3.0",
+    "pytest>=7.2.0",
     "pytest-cov>=2.6.1",
     "twine",
     "wheel",

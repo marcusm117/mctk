@@ -110,7 +110,6 @@ def test_ks_add_states():
     assert ks.states == states
 
 
-# test ks.get_states()
 def test_ks_get_states():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]

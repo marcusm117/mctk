@@ -72,37 +72,41 @@ Please follow these steps:
    git checkout -b MCTK-[YOUR_BRANCH_NUMBER]
    ```
 
-5. **Install Dependencies**: install the all development dependencies for MCTK.
+5. **Check Prerequisites**: make sure that you have the following prerequisites:
+
+   - [Python 3.8+](https://www.python.org/downloads/)
+
+6. **Install Dependencies**: install the all development dependencies for MCTK.
 
    ```bash
    make develop
    ```
 
-6. **Write Code**: write code for your changes. You can autoformat your code using the following command:
+7. **Write Code**: write code for your changes. You can autoformat your code using the following command:
 
    ```bash
    make format
    ```
 
-7. **Lint Code**: lint your code and make sure that there are no errors. You can lint your code using the following command:
+8. **Lint Code**: lint your code and make sure that there are no errors. You can lint your code using the following command:
 
    ```bash
    make lint
    ```
 
-8. **Write Tests**: write tests for your changes. Make sure that all tests pass and the coverage is at least 100%. You can see the coverage using the following command:
+9. **Write Tests**: write tests for your changes. Make sure that all tests pass and the coverage is at least 100%. You can see the coverage using the following command:
 
    ```bash
    make coverage
    ```
 
-9. **Commit your Changes**: commit your changes to your local repository. It's okay if you have multiple commits for a single pull request, since they will be squashed when merged, but please write meaningful commit messages. Please do not write commit messages like "fix" or "update".
+10. **Commit your Changes**: commit your changes to your local repository. It's okay if you have multiple commits for a single pull request, since they will be squashed when merged, but please write meaningful commit messages. Please do not write commit messages like "fix" or "update".
 
-   ```bash
-   git commit -m "meaningful commit message"
-   ```
+    ```bash
+    git commit -m "[YOUR_COMMIT_MESSAGE]"
+    ```
 
-10. **Push your Changes**: push your changes to your fork.
+11. **Push your Changes**: push your changes to your fork.
 
     ```bash
     git push origin MCTK-[YOUR_BRANCH_NUMBER]

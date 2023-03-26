@@ -1,6 +1,6 @@
 # Model Checking Toolkit (MCTK)
 
-[![Build Status](https://github.com/marcusm117/mctk/workflows/Build%20Status/badge.svg?branch=dev)](https://github.com/marcusm117/mctk/actions?query=workflow%3A%22Build+Status%22) [![codecov](https://codecov.io/gh/marcusm117/mctk/branch/dev/graph/badge.svg)](https://codecov.io/gh/marcusm117/mctk) [![License](https://img.shields.io/badge/License-Apache_2.0-green)](https://github.com/marcusm117/mctk/blob/dev/LICENSE) [![Issues](https://img.shields.io/github/issues/marcusm117/FV_mctk?color=red&label=Issues)](https://github.com/marcusm117/mctk/issues)
+[![PyPI](https://img.shields.io/pypi/v/mctk-py?color=blue&label=PyPI)](https://pypi.org/project/mctk-py/) [![Build Status](https://github.com/marcusm117/mctk/workflows/Build%20Status/badge.svg?branch=dev)](https://github.com/marcusm117/mctk/actions?query=workflow%3A%22Build+Status%22) [![codecov](https://codecov.io/gh/marcusm117/mctk/branch/dev/graph/badge.svg)](https://codecov.io/gh/marcusm117/mctk) [![License](https://img.shields.io/badge/License-Apache_2.0-green)](https://github.com/marcusm117/mctk/blob/dev/LICENSE) [![Issues](https://img.shields.io/github/issues/marcusm117/FV_mctk?color=red&label=Issues)](https://github.com/marcusm117/mctk/issues)
 
 Model Checking Toolkit in Python.
 
@@ -17,7 +17,7 @@ Users can create checker instances to formally verify if a Kripke Structure (can
 Get the latest version of `mctk` from PyPI:
 
    ``` bash
-   pip3 install mctk
+   pip3 install mctk-py
    ```
 
 If you are having trouble with `pip3`, you can also install from the source code, see [Developing](#developing).

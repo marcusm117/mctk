@@ -30,6 +30,7 @@ Please follow these steps:
 1. **Open a New Issue**: open a new issue on [MCTK Issues](https://github.com/marcusm117/mctk/issues). Please use the **Bug Report** template.
 2. **Label the Issue**: label the issue with the `bug` label.
 3. **Write a Meaningful Title**: write a concise, descriptive title. Try to use the same words you would use searching for an existing bug report. Please do not write titles like "Help!" or "Urgent!".
+4. **Congratulations!**: you have successfully contribued a Bug Report to MCTK. We will take a look at your report as soon as possible! Please feel free to add comments or ask questions in your issue.
 
 ## Suggesting Enhancements
 
@@ -49,6 +50,7 @@ Please follow these steps:
 1. **Open a New Issue**: open a new issue on [MCTK Issues](https://github.com/marcusm117/mctk/issues). Please use the **Enhancement Suggestion** template.
 2. **Label the Issue**: label the issue with the `enhancement` label.
 3. **Write a Meaningful Title**: write a concise, descriptive title. Try to use the same words you would use searching for an existing enhancement suggestion. Please do not write titles like "Help!" or "Urgent!".
+4. **Congratulations!**: you have successfully contribued an Enhancement Suggestion to MCTK. We will take a look at your suggestion as soon as possible! Please feel free to add comments or ask questions in your issue.
 
 ## Contributing Code
 

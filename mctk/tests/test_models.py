@@ -16,7 +16,7 @@ def test_ks_default_init():
     ks = KripkeStruct()
     assert ks.atoms == ()
     assert ks.states == {}
-    assert ks.starts == ()
+    assert ks.starts == set()
     assert ks.trans == defaultdict(list)
     assert ks.trans_inverted == defaultdict(list)
 
@@ -26,14 +26,14 @@ def test_ks_file_init():
     ks_json = {
         "Atoms": ("a", "b", "c", "d"),
         "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
-        "Starts": ("s1",),
+        "Starts": ["s1"],
         "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]},
     }
     ks = KripkeStruct(ks_json)
 
     assert ks.atoms == ("a", "b", "c", "d")
     assert ks.states == {"s1": 8, "s2": 12, "s3": 6, "s4": 7}
-    assert ks.starts == ("s1",)
+    assert ks.starts == {"s1"}
     assert dict(ks.trans) == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]}
 
 
@@ -42,14 +42,14 @@ def test_ks_str_rep():
     ks_json = {
         "Atoms": ("a", "b", "c", "d"),
         "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
-        "Starts": ("s1",),
+        "Starts": {"s1"},
         "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]},
     }
     ks = KripkeStruct(ks_json)
     assert str(ks) == (
         "Atoms: ('a', 'b', 'c', 'd')\n"
         + "States: {'s1': 8, 's2': 12, 's3': 6, 's4': 7}\n"
-        + "Starts: ('s1',)\n"
+        + "Starts: {'s1'}\n"
         + "Trans: {'s1': ['s2'], 's2': ['s3', 's4'], 's3': ['s4']}"
     )
 
@@ -118,6 +118,19 @@ def test_ks_get_states():
     assert ks.get_states() == {"s1": 0b1000}
 
 
+def test_get_state_label_set():
+    ks = KripkeStruct()
+    atoms = ["a", "b", "c", "d"]
+    ks.set_atoms(atoms)
+    ks.add_state("s1", 0b1001)
+    assert ks.get_state_label_set("s1") == {"a", "d"}
+
+    # if the state doesn't exist, can't get the Label Set of it
+    with pytest.raises(KripkeStructError) as error_info:
+        assert ks.get_state_label_set("s2")
+    assert str(error_info.value) == "Can't get the Label Set of a Non-Exisiting State"
+
+
 def test_ks_remove_state():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
@@ -175,12 +188,12 @@ def test_ks_set_starts():
 
     starts = ["s1", "s4"]
     ks.set_starts(starts)
-    assert ks.starts == tuple(starts)
+    assert ks.starts == set(starts)
 
     # resetting the start states is allowed
     starts = ["s1"]
     ks.set_starts(starts)
-    assert ks.starts == tuple(starts)
+    assert ks.starts == set(starts)
 
     # if state doesn't exist, can't set as start state
     with pytest.raises(KripkeStructError) as error_info:
@@ -202,7 +215,7 @@ def test_ks_get_starts():
 
     starts = ["s1", "s4"]
     ks.set_starts(starts)
-    assert ks.get_starts() == starts
+    assert set(ks.get_starts()) == set(starts)
 
 
 def test_ks_add_trans():
@@ -338,3 +351,44 @@ def test_ks_remove_states_will_remove_related_trans():
     ks.remove_state("s2")
     assert ks.get_trans() == {'s1': [], 's3': ['s4', 's1'], 's4': []}
     assert ks.get_trans_inverted() == {'s3': [], 's4': ['s3'], 's1': ['s3']}
+
+
+def test_get_SCCs():
+    ks_json = {
+        "Atoms": ("a", "b", "c", "d"),
+        "States": {
+            "s1": 0b1000,  # s1 has labels "a"
+            "s2": 0b1100,  # s2 has labels "a", "b"
+            "s3": 0b0110,  # s3 has labels "b", "c"
+            "s4": 0b0111,  # s4 has labels "b", "c", "d"
+            "s5": 0b0100,  # s5 has label "b"
+            "s6": 0b0010,  # s6 has label "c"
+            "s7": 0b0001,  # s7 has label "d"
+        },
+        "Starts": ["s1"],
+        "Trans": {
+            's1': ['s2'],
+            's2': ['s3', 's4'],
+            's3': ['s4'],
+            's4': ['s7'],
+            's5': ['s6'],
+            's6': ['s7', 's5'],
+            's7': ['s5'],
+        },
+    }
+    ks = KripkeStruct(ks_json)
+    SCC_1 = frozenset({"s1"})
+    SCC_2 = frozenset({"s2"})
+    SCC_3 = frozenset({"s3"})
+    SCC_4 = frozenset({"s4"})
+    SCC_5 = frozenset({"s5", "s6", "s7"})
+    assert ks.get_SCCs() == {SCC_1, SCC_2, SCC_3, SCC_4, SCC_5}
+
+    ks.add_trans({"s4": ["s2"]})
+    SCC_6 = frozenset({"s2", "s3", "s4"})
+    assert ks.get_SCCs() == {SCC_1, SCC_6, SCC_5}
+
+    ks.remove_states(["s3", "s4", "s6"])
+    SCC_7 = frozenset({"s5"})
+    SCC_8 = frozenset({"s7"})
+    assert ks.get_SCCs() == {SCC_1, SCC_2, SCC_7, SCC_8}

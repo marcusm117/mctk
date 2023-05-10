@@ -1,8 +1,10 @@
 # Authors: marcusm117
 # License: Apache 2.0
 
-from typing import List, Dict
+# Standard Libraries
+from typing import List, Dict, Set
 from collections import defaultdict
+from copy import deepcopy
 
 
 class KripkeStructError(Exception):
@@ -11,6 +13,8 @@ class KripkeStructError(Exception):
     Raised when trying to reset Atoms after States are Created
     Raised when trying to add an Exisiting State Name again
     Raised when trying to add an Exisiting State Label again
+    Raised when trying to get the Label Set of a Non-Exisiting State
+    Raised when trying to perform model checking on a Non-Exisiting Atom
     Raised when trying set a Non-Exisiting State as Start State
     Raised when trying to add Transition from a Non-Exisiting Source State
     Raised when trying to add Transition to a Non-Exisiting Target State
@@ -23,12 +27,12 @@ class KripkeStruct:
 
     An instance of thie class can be created from a JSON file or from scratch.
     For more information about Kripke Structures, see:
-    https://en.wikipedia.org/wiki/Kripke_structure_(model_checking)
+    https://en.wikipedia.org/wiki/Kripke_structure_(model_checking).
 
     Attributes:
         atoms (tuple): Atoms
         states (dict): States, Key is the state name, Value is the state label
-        starts (tuple): Start States
+        starts (set): Start States
         trans (defaultdict): Transitions, Key is the source state, Value is a list of target states
         trans_inverted (defaultdict): Inverted Transitions, Key is the target state, Value is a list of source states
 
@@ -37,7 +41,7 @@ class KripkeStruct:
     def __init__(self, model_json=None):
         self.atoms = ()
         self.states = {}
-        self.starts = ()
+        self.starts = set()
         self.trans = defaultdict(list)
         self.trans_inverted = defaultdict(list)
 
@@ -125,6 +129,39 @@ class KripkeStruct:
         """
         return self.states
 
+    def get_state_label_set(self, state: str) -> Set[str]:
+        """Given a State Name, get the State Labels.
+
+        For example, if the atoms = ("a", "b", "c", "d"), and the label = 0b1010,
+        then the label_set = {"a", "c"}.
+
+        Args:
+            state: a string representing the State Name
+
+        Returns:
+            a set of strings representing the State Label, instead of the original binary form
+
+        Raises:
+            KripkeStructError: if the State Name doesn't exisit, can't get the Label Set of it
+
+        """
+        # if the state doesn't exisit, can't get the Label Set of it
+        if state not in self.states:
+            raise KripkeStructError("Can't get the Label Set of a Non-Exisiting State")
+
+        # get the binary form of the label, then convert it to the Label Set
+        label = self.states[state]
+        length = len(self.atoms)
+        label_set = set()
+
+        # traverse the binary form of the label
+        for i in range(length):
+            # if the i-th bit is 1, then the (length - 1 - i)-th atom is in the Label Set
+            if label & 1 << i:
+                label_set.add(self.atoms[length - 1 - i])
+
+        return label_set
+
     def remove_state(self, state: str) -> None:
         """Remove a State from the Kripke Structure.
 
@@ -168,7 +205,7 @@ class KripkeStruct:
             # if start state doesn't exist, can't set it
             if start not in self.states:
                 raise KripkeStructError("Can't set a Non-Exisiting State as Start State")
-        self.starts = tuple(starts)
+        self.starts = set(starts)
 
     def get_starts(self) -> List[str]:
         """Get Start States of the Kripke Structure.
@@ -233,3 +270,62 @@ class KripkeStruct:
                 if state in self.states and next_state in self.trans[state]:
                     self.trans[state].remove(next_state)
                     self.trans_inverted[next_state].remove(state)
+
+    def get_SCCs(self) -> List[Set[str]]:
+        """Get all Strongly Connected Components (SCCs) in the Kripke Structure.
+
+        Returns:
+            a list of sets, where each set is a SCC
+
+        """
+        # we use Kosaraju's Algorithm to find SCCs
+        # first, we run DFS on the original graph, store the order of finishing states in "order_stack"
+        order_stack = []
+        visited = set()
+
+        def DFS(state, visited, order_stack):
+            visited.add(state)
+            successors = self.trans[state]
+            for successor in successors:
+                if successor not in visited:
+                    DFS(successor, visited, order_stack)
+            # add to order_stack when exiting DFS
+            order_stack.append(state)
+
+        for state in self.states:
+            if state not in visited:
+                DFS(state, visited, order_stack)
+
+        # second, we create the reversed graph of the Kripke Structure self
+        # since we need to modify the reversed graph, we create a deepcopy of self
+        reversed_graph = deepcopy(self)
+        reversed_graph.trans, reversed_graph.trans_inverted = reversed_graph.trans_inverted, reversed_graph.trans
+
+        # third we run multiple rounds of DFS on the reversed graph until all states are visited
+        # when we finish a round of DFS, we get a SCC
+        # then we add the SCC to the set, and remove all states in the SCC from the reversed graph
+        SCCs = set()
+        while reversed_graph.states:
+            # we run DFS on the reversed graph, following the order of the "order_stack"
+            tmp_stack = [order_stack.pop()]
+            visited = set()
+            while tmp_stack:
+                current_state = tmp_stack.pop()
+                visited.add(current_state)
+
+                # remove the visited state from the order_stack
+                if current_state in order_stack:
+                    order_stack.remove(current_state)
+
+                # add un-visited successors to the stack
+                successors = reversed_graph.trans[current_state]
+                for successor in successors:
+                    if successor not in visited:
+                        tmp_stack.append(successor)
+
+            # now all states in the set "visited" are in the same SCC
+            # so we add it to the list of SCCs, and remove all states in it from the reversed graph
+            SCCs.add(frozenset(visited))
+            reversed_graph.remove_states(list(visited))
+
+        return SCCs

@@ -17,7 +17,7 @@ install:  ## install library
 lint:  ## run static analysis with black, flake8, and pylint
 	python -m black --check mctk setup.py
 	python -m flake8 --max-line-length=120 --extend-ignore=E203 mctk setup.py
-	python -m pylint --disable=C0301,C0114,C0115,C0116,R1720,C0103 mctk setup.py
+	python -m pylint --disable=C0301,R1720,C0114,C0103,W1114 mctk setup.py
 
 # Alias
 lints: lint

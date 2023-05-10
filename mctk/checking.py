@@ -1,5 +1,50 @@
 # Authors: marcusm117
 # License: Apache 2.0
+"""This Module contains functions to perform Explicit-State Model Checking on CTL properties on a Kripke Structure.
+
+Examples:
+    >>> from mctk import *
+    >>> ks_json = {
+    ...     "Atoms": ("a", "b", "c", "d"),
+    ...     "States": {
+    ...         "s1": 0b1000,  # s1 has labels "a"
+    ...         "s2": 0b1100,  # s2 has labels "a", "b"
+    ...         "s3": 0b0110,  # s3 has labels "b", "c"
+    ...         "s4": 0b0111,  # s4 has labels "b", "c", "d"
+    ...         "s5": 0b0100,  # s5 has label "b"
+    ...         "s6": 0b0010,  # s6 has label "c"
+    ...         "s7": 0b0001,  # s7 has label "d"
+    ...     },
+    ...     "Starts": ["s1"],
+    ...     "Trans": {
+    ...         's1': ['s2'],
+    ...         's2': ['s3', 's4'],
+    ...         's3': ['s4'],
+    ...         's4': ['s7'],
+    ...         's5': ['s6'],
+    ...         's6': ['s7', 's5'],
+    ...         's7': ['s5'],
+    ...     },
+    ... }
+    >>> ks = KripkeStruct(ks_json)
+    >>> sat_states = SAT_atom(ks, "a")
+    >>> print(sat_states)
+    {'s1', 's2'}
+    >>> sat_states = AND(SAT_atom(ks, "b"), SAT_atom(ks, "c"))
+    >>> print(sat_states)
+    {'s3', 's4'}
+    >>> sat_states = EX(ks, SAT_atom(ks, "a"))
+    >>> print(sat_states)
+    {'s2'}
+    >>> sat_states = EU(ks, SAT_atom(ks, "a"), SAT_atom(ks, "b"))
+    >>> print(sat_states)
+    {'s1', 's2', 's3', 's4', 's5'}
+    >>> sat_states = EG(tmp_ks, SAT_atom(tmp_ks, "a"))
+    >>> print(sat_states)
+    set()
+
+"""
+
 
 # Standard Libraries
 from copy import deepcopy
@@ -115,6 +160,24 @@ def IMPLIES(ks: KripkeStruct, property1: Set[str], property2: Set[str]) -> Set[s
     # complement of property1, then union property2
     # p IMPLIES q = NOT(p) OR q
     return NOT(ks, property1) | property2
+
+
+def IFF(ks: KripkeStruct, property1: Set[str], property2: Set[str]) -> Set[str]:
+    """Implement the IFF operator on two CTL properties.
+
+    Return a set of states where the CTL formula "property1 IFF property2" is satisfied.
+
+    Args:
+        ks: a Kripke Structure
+        property1: a CTL property represented as a set of states that satisfy the property
+        property2: a CTL property represented as a set of states that satisfy the property
+
+    Returns:
+        a set of states where the CTL formula "property1 IFF property2" is satisfied
+
+    """
+    # (p IFF q) = (p IMPLIES q) AND (q IMPLIES p)
+    return IMPLIES(ks, property1, property2) & IMPLIES(ks, property2, property1)
 
 
 def EX(ks: KripkeStruct, property1: Set[str]) -> Set[str]:

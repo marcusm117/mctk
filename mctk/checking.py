@@ -2,7 +2,7 @@
 # License: Apache 2.0
 
 from typing import Set
-from mctk import KripkeStruct, KripkeStructError
+from .models import KripkeStruct, KripkeStructError
 
 
 def SAT_atom(ks: KripkeStruct, atomic_property: str) -> Set[str]:

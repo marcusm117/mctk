@@ -1,8 +1,10 @@
 # Authors: marcusm117
 # License: Apache 2.0
 
+# Standard Libraries
 from typing import List, Dict, Set
 from collections import defaultdict
+from copy import deepcopy
 
 
 class KripkeStructError(Exception):
@@ -296,8 +298,6 @@ class KripkeStruct:
 
         # second, we create the reversed graph of the Kripke Structure self
         # since we need to modify the reversed graph, we create a deepcopy of self
-        from copy import deepcopy
-
         reversed_graph = deepcopy(self)
         reversed_graph.trans, reversed_graph.trans_inverted = reversed_graph.trans_inverted, reversed_graph.trans
 

@@ -1,7 +1,11 @@
 # Authors: marcusm117
 # License: Apache 2.0
 
+# Standard Libraries
+from copy import deepcopy
 from typing import Set
+
+# Internal Modules
 from .models import KripkeStruct, KripkeStructError
 
 
@@ -250,8 +254,6 @@ def EG(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
     # creat a sub-graph of the original Kripke Structure ks
     # where we remove all states that do not satisfy property
     # since we need to modify the reversed graph, we create a deepcopy of self
-    from copy import deepcopy
-
     sub_graph = deepcopy(ks)
     for state in ks.states:
         if state not in property1:

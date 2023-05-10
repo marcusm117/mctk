@@ -1,13 +1,13 @@
 # Authors: marcusm117
 # License: Apache 2.0
 
-# standard libraries
+# Standard Libraries
 from collections import defaultdict
 
-# external libraries
+# External Libraries
 import pytest
 
-# module to be tested
+# Internal Modules to be tested
 from mctk import KripkeStruct, KripkeStructError
 
 

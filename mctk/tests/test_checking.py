@@ -1,10 +1,13 @@
 # Authors: marcusm117
 # License: Apache 2.0
 
-# external libraries
+# Standard Libraries
+from copy import deepcopy
+
+# External Libraries
 import pytest
 
-# module to be tested
+# Internal Modules to be tested
 from mctk import KripkeStruct, KripkeStructError
 from mctk import SAT_atom, NOT, AND, OR, IMPLIES, EX, AX, EU, EF, AG, EG, AF, AU
 
@@ -171,8 +174,6 @@ def test_ESMC_AG():
 
 
 def test_ESMC_EG():
-    from copy import deepcopy
-
     # change s5's label to {"b", "d"}
     # change s6's label to {"c", "d"}
     tmp_ks = deepcopy(ks)
@@ -197,8 +198,6 @@ def test_ESMC_EG():
 
 
 def test_ESMC_AF():
-    from copy import deepcopy
-
     # change s7 to "", which is empty set
     tmp_ks = deepcopy(ks)
     tmp_ks.states["s7"] = 0b0000
@@ -225,3 +224,18 @@ def test_ESMC_AU():
 
     sat_states = AU(ks, SAT_atom(ks, "b"), SAT_atom(ks, "c"))
     assert sat_states == {"s2", "s3", "s4", "s5", "s6"}
+
+
+def test_ESMC_composite_CTL_formula():
+    sat_states = EF(ks, SAT_atom(ks, "a") & SAT_atom(ks, "b"))
+    assert sat_states == {"s1", "s2"}
+
+    sat_states = AU(ks, NOT(ks, SAT_atom(ks, "a")), SAT_atom(ks, "c"))
+    assert sat_states == {"s3", "s4", "s5", "s6", "s7"}
+
+    sat_states = EX(ks, AF(ks, SAT_atom(ks, "b")))
+    assert sat_states == {"s1", "s2", "s3", "s4", "s5", "s6", "s7"}
+
+    sat_states = AU(ks, EX(ks, SAT_atom(ks, "b")), SAT_atom(ks, "c"))
+    print(sat_states)
+    assert sat_states == {"s1", "s2", "s3", "s4", "s6"}

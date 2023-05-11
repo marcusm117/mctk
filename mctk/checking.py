@@ -390,6 +390,7 @@ def AU(ks: KripkeStruct, property1: Set[str], property2: Set[str]) -> Set[str]:
 
     """
     # A p1 U p2 = NOT (E NOT(p2) U (NOT(p1) AND NOT(p2))) AND NOT (EG NOT(p2))
+    #           = NOT (E NOT(p2) U (NOT(p1) AND NOT(p2))) AND AF p2
     return NOT(ks, EU(ks, NOT(ks, property2), NOT(ks, property1) & NOT(ks, property2))) & NOT(
         ks, EG(ks, NOT(ks, property2))
     )

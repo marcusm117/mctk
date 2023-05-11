@@ -45,7 +45,7 @@ type: annotate
 # TESTS #
 #########
 test: ## clean and run unit tests
-	python -m pytest -v mctk/tests
+	python -m pytest -vv mctk/tests
 
 # Alias
 tests: test

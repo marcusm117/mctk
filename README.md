@@ -54,7 +54,7 @@ We use a `Makefile` as a command registry:
 
 ## Usage
 
-Create a Krinke Structure from scratch.
+### Create a Kripke Structure from scratch
 
 ``` python
 from mctk import *
@@ -82,7 +82,7 @@ ks.set_starts(["s0"])
 ks.add_trans({"s0": ["s1"], "s1": ["s0"]})
 ```
 
-Check if the Kripke Structure satisfies a simple CTL formula.
+### Checking simple CTL formula on the Kripke Structure
 
 ``` python
 # check if the Kripke Structure satisfies the CTL formula: EX p
@@ -105,7 +105,7 @@ sat_states = EU(ks, SAT_atom(ks, "p"), SAT_atom(ks, "q"))
 assert sat_states == {"s0", "s1"}
 ```
 
-Check if the Kripke Structure satisfies a composite CTL formula.
+### Checking composite CTL formula on the Kripke Structure
 
 ``` python
 # check if the Kripke Structure satisfies the CTL formula: EX (p AND EX q)

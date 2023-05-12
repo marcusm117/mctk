@@ -11,8 +11,8 @@ Welcome to Model Checking Toolkit (MCTK)'s documentation!
    :caption: Contents
 
    tutorials/getstarted.md
-   tutorials/contributing.md
    apis/mctk.rst
+   tutorials/contributing.md
 
 Indices and tables
 ==================

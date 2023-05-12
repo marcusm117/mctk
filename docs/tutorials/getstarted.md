@@ -50,9 +50,9 @@ We use a `Makefile` as a command registry:
 - `make test`: run automated tests with `pytest`
 - `make coverage`: run automated tests with `pytest` and collect coverage information
 
-## Usage
+## Examples
 
-Create a Krinke Structure from scratch.
+### Create a Kripke Structure from scratch
 
 ``` python
 from mctk import *
@@ -80,7 +80,7 @@ ks.set_starts(["s0"])
 ks.add_trans({"s0": ["s1"], "s1": ["s0"]})
 ```
 
-Check if the Kripke Structure satisfies a simple CTL formula.
+### Checking simple CTL formula on the Kripke Structure
 
 ``` python
 # check if the Kripke Structure satisfies the CTL formula: EX p
@@ -103,7 +103,7 @@ sat_states = EU(ks, SAT_atom(ks, "p"), SAT_atom(ks, "q"))
 assert sat_states == {"s0", "s1"}
 ```
 
-Check if the Kripke Structure satisfies a composite CTL formula.
+### Checking composite CTL formula on the Kripke Structure
 
 ``` python
 # check if the Kripke Structure satisfies the CTL formula: EX (p AND EX q)
@@ -118,5 +118,54 @@ sat_states = EG(ks, AU(ks, SAT_atom(ks, "p"), NOT(ks, SAT_atom(ks, "q"))))
 
 # the result should be set(), empty set
 # since the start state "s0" is not in sat_states, ks doesn't satisfy the CTL formula
+assert sat_states == set()
+```
+
+### Checking CTL formula on a more complex Kripke Structure
+
+``` python
+ks_json = {
+   "Atoms": ("a", "b", "c", "d"),
+   "States": {
+      "s1": 0b1000,  # s1 has labels "a"
+      "s2": 0b1100,  # s2 has labels "a", "b"
+      "s3": 0b0110,  # s3 has labels "b", "c"
+      "s4": 0b0111,  # s4 has labels "b", "c", "d"
+      "s5": 0b0100,  # s5 has label "b"
+      "s6": 0b0010,  # s6 has label "c"
+      "s7": 0b0001,  # s7 has label "d"
+      },
+      "Starts": ["s1"],
+      "Trans": {
+         's1': ['s2'],
+         's2': ['s3', 's4'],
+         's3': ['s4'],
+         's4': ['s7'],
+         's5': ['s6'],
+         's6': ['s7', 's5'],
+         's7': ['s5'],
+         },
+}
+ks = KripkeStruct(ks_json)
+
+# check if the Kripke Structure satisfies the CTL formula: EX a
+sat_states = EX(ks, SAT_atom(ks, "a"))
+
+# the result should be {"s2"}
+# since the start state "s1" is not in sat_states, ks doesn't satisfy the CTL formula
+assert sat_states == {"s2"}
+
+# check if the Kripke Structure satisfies the CTL formula: E a U b
+sat_states = EU(ks, SAT_atom(ks, "a"), SAT_atom(ks, "b"))
+
+# the result should be {'s1', 's2', 's3', 's4', 's5'}
+# since the start state "s1" is in sat_states, ks satisfies the CTL formula
+assert sat_states == {'s1', 's2', 's3', 's4', 's5'}
+
+# check if the Kripke Structure satisfies the CTL formula: EG a
+sat_states = EG(tmp_ks, SAT_atom(tmp_ks, "a"))
+
+# the result should be set()
+# since the start state "s1" is not in sat_states, ks doesn't satisfy the CTL formula
 assert sat_states == set()
 ```

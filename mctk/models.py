@@ -1,5 +1,10 @@
 # Authors: marcusm117
 # License: Apache 2.0
+"""This Module currently contains a class KripkeStruct, which is a graph implementation of Kripke Structures.
+
+We plan to support other Transition Systems as well in the future.
+
+"""
 
 # Standard Libraries
 from typing import List, Dict, Set

@@ -51,7 +51,7 @@ test: ## clean and run unit tests
 tests: test
 
 coverage:  ## clean and run unit tests with coverage
-	python -m pytest -v mctk/tests --cov=mctk --cov-branch --cov-fail-under=75 --junitxml=python_junit.xml --cov-report term-missing
+	python -m pytest -v mctk/tests --cov=mctk --cov-branch --cov-fail-under=100 --junitxml=python_junit.xml --cov-report term-missing
 
 # Alias
 cov: coverage
@@ -91,10 +91,10 @@ publish:  # Upload python assets
 #########
 # CLEAN #
 #########
-clean-deep: ## clean everything untracked from the repository
+deep-clean: ## clean everything untracked from the repository
 	git clean -fdx
 
-clean-linux: ## clean the repository
+clean: ## clean the repository
 	rm -rf .coverage coverage cover htmlcov logs build dist *.egg-info .pytest_cache
 
 

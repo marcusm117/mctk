@@ -1,6 +1,6 @@
-# Model Checking Toolkit (MCTK)
+# Getting Started
 
-[![PyPI](https://img.shields.io/pypi/v/mctk-py?color=blue&label=PyPI)](https://pypi.org/project/mctk-py/) [![CI](https://github.com/marcusm117/mctk/workflows/CI/badge.svg?branch=dev)](https://github.com/marcusm117/mctk/actions?query=workflow%3A%22Build+Status%22) [![codecov](https://codecov.io/gh/marcusm117/mctk/branch/dev/graph/badge.svg)](https://codecov.io/gh/marcusm117/mctk) [![License](https://img.shields.io/badge/License-Apache_2.0-green)](https://github.com/marcusm117/mctk/blob/dev/LICENSE) [![Issues](https://img.shields.io/github/issues/marcusm117/FV_mctk?color=red&label=Issues)](https://github.com/marcusm117/mctk/issues)
+[![PyPI](https://img.shields.io/pypi/v/mctk-py?color=blue&label=PyPI)](https://pypi.org/project/mctk-py/) [![CI](https://github.com/marcusm117/mctk/workflows/CI/badge.svg?branch=dev)](https://github.com/marcusm117/mctk/actions?query=workflow%3A%22Build+Status%22) [![codecov](https://codecov.io/gh/marcusm117/mctk/branch/dev/graph/badge.svg)](https://codecov.io/gh/marcusm117/mctk) [![Docs](https://github.com/marcusm117/mctk/workflows/Docs/badge.svg?branch=dev))](https://marcusm117.github.io/mctk/) [![License](https://img.shields.io/badge/License-Apache_2.0-green)](https://github.com/marcusm117/mctk/blob/dev/LICENSE) [![Issues](https://img.shields.io/github/issues/marcusm117/FV_mctk?color=red&label=Issues)](https://github.com/marcusm117/mctk/issues)
 
 Model Checking Toolkit for Python.
 
@@ -10,9 +10,7 @@ Model Checking Toolkit for Python.
 
 Users can use functions that implements CTL operators to formally verify if a Kripke Structure (can be created during runtime or input in a JSON file) satisfies certain CTL properties. All checking functions will return a set of states that satisfy the CTL property, which means that if any start state of the Kripke Structure is in the returned set, then the Kripke Structure satisfies the CTL property.
 
-## Getting Started
-
-### Installation
+## Installation
 
 Get the latest version of `mctk` from PyPI. Note that the registered name is 'mctk-py' on PyPI due to the strict typo-squatting prevention mechanism of the registry. However, when using the library, you should import it as 'mctk'.
 
@@ -22,7 +20,7 @@ Get the latest version of `mctk` from PyPI. Note that the registered name is 'mc
 
 If you are having trouble with `pip3`, you can also install from the source code, see [Developing](#developing).
 
-### Developing
+## Developing
 
 Clone this Repository to your Local Environment.
 
@@ -42,7 +40,7 @@ Install the Library with all Dependencies.
    make develop
    ```
 
-### Linting & Testing
+## Linting & Testing
 
 We use a `Makefile` as a command registry:
 
@@ -122,9 +120,3 @@ sat_states = EG(ks, AU(ks, SAT_atom(ks, "p"), NOT(ks, SAT_atom(ks, "q"))))
 # since the start state "s0" is not in sat_states, ks doesn't satisfy the CTL formula
 assert sat_states == set()
 ```
-
-## Contributing
-
-All contrbutions are welcome!
-
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details.

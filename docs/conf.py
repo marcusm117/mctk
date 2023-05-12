@@ -55,9 +55,7 @@ source_suffix = ['.rst', '.md']
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
-html_theme_options = {
-    'navigation_depth': 5
-}
+html_theme_options = {'navigation_depth': 6}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

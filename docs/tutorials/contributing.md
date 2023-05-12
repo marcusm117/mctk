@@ -1,4 +1,4 @@
-# Contributing to MCTK
+# Contributing
 
 Hi! Thanks for your interest in contributing to [MCTK](https://github.com/marcusm117/mctk). You can contribute in many ways, including:
 

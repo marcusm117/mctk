@@ -17,7 +17,7 @@ install:  ## install library
 lint:  ## run static analysis with black, flake8, and pylint
 	python -m black --check mctk setup.py
 	python -m flake8 --max-line-length=120 --extend-ignore=E203 mctk setup.py
-	python -m pylint --disable=C0301,C0114,C0115,C0116,R1720,C0103 mctk setup.py
+	python -m pylint --disable=C0301,R1720,C0114,C0103,W1114 mctk setup.py
 
 # Alias
 lints: lint
@@ -45,13 +45,13 @@ type: annotate
 # TESTS #
 #########
 test: ## clean and run unit tests
-	python -m pytest -v mctk/tests
+	python -m pytest -vv mctk/tests
 
 # Alias
 tests: test
 
 coverage:  ## clean and run unit tests with coverage
-	python -m pytest -v mctk/tests --cov=mctk --cov-branch --cov-fail-under=75 --junitxml=python_junit.xml --cov-report term-missing
+	python -m pytest -v mctk/tests --cov=mctk --cov-branch --cov-fail-under=100 --junitxml=python_junit.xml --cov-report term-missing
 
 # Alias
 cov: coverage
@@ -91,10 +91,10 @@ publish:  # Upload python assets
 #########
 # CLEAN #
 #########
-clean-deep: ## clean everything untracked from the repository
+deep-clean: ## clean everything untracked from the repository
 	git clean -fdx
 
-clean-linux: ## clean the repository
+clean: ## clean the repository
 	rm -rf .coverage coverage cover htmlcov logs build dist *.egg-info .pytest_cache
 
 

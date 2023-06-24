@@ -14,35 +14,35 @@ from mctk import KripkeStruct, KripkeStructError
 # Tests for KripkeStruct()
 def test_KS_default_init():
     ks = KripkeStruct()
-    assert ks.atoms == ()
-    assert ks.states == {}
-    assert ks.starts == set()
-    assert ks.trans == defaultdict(list)
-    assert ks.trans_inverted == defaultdict(list)
+    assert ks._atoms == ()
+    assert ks._states == {}
+    assert ks._starts == set()
+    assert ks._trans == defaultdict(list)
+    assert ks._trans_inverted == defaultdict(list)
 
 
 # Tests for KripkeStruct(ks_json)
 def test_KS_file_init():
     ks_json = {
-        "Atoms": ("a", "b", "c", "d"),
+        "Atoms": ["a", "b", "c", "d"],
         "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
         "Starts": ["s1"],
         "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]},
     }
     ks = KripkeStruct(ks_json)
 
-    assert ks.atoms == ("a", "b", "c", "d")
-    assert ks.states == {"s1": 8, "s2": 12, "s3": 6, "s4": 7}
-    assert ks.starts == {"s1"}
-    assert dict(ks.trans) == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]}
+    assert ks._atoms == ("a", "b", "c", "d")
+    assert ks._states == {"s1": 8, "s2": 12, "s3": 6, "s4": 7}
+    assert ks._starts == {"s1"}
+    assert ks._trans == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]}
 
 
 # Tests for ks.__str__()
 def test_KS_str_rep():
     ks_json = {
-        "Atoms": ("a", "b", "c", "d"),
+        "Atoms": ["a", "b", "c", "d"],
         "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
-        "Starts": {"s1"},
+        "Starts": ["s1"],
         "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]},
     }
     ks = KripkeStruct(ks_json)
@@ -58,12 +58,12 @@ def test_KS_set_atoms():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    assert ks.atoms == ("a", "b", "c", "d")
+    assert ks._atoms == tuple(atoms)
 
     # if any state exists, can't reset atoms
     with pytest.raises(KripkeStructError) as error_info:
         ks.add_state("s1", 0b1000)
-        atoms = ["a"]
+        atoms = ("a",)
         ks.set_atoms(atoms)
     assert str(error_info.value) == "Can't reset Atoms after States are Created"
 
@@ -72,7 +72,7 @@ def test_KS_get_atoms():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    assert ks.get_atoms() == atoms
+    assert ks.get_atoms() == tuple(atoms)
 
 
 def test_KS_add_state():
@@ -80,7 +80,7 @@ def test_KS_add_state():
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
     ks.add_state("s1", 0b1000)
-    assert ks.states == {"s1": 0b1000}
+    assert ks._states == {"s1": 0b1000}
 
     # if the state name exists, can't add again
     with pytest.raises(KripkeStructError) as error_info:
@@ -107,7 +107,7 @@ def test_KS_add_states():
         "s7": 0b0001,  # s7 has label "d"
     }
     ks.add_states(states)
-    assert ks.states == states
+    assert ks._states == states
 
 
 def test_KS_get_states():
@@ -118,16 +118,16 @@ def test_KS_get_states():
     assert ks.get_states() == {"s1": 0b1000}
 
 
-def test_KS_get_state_label_set():
+def test_KS_get_label_set_of_state():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
     ks.add_state("s1", 0b1001)
-    assert ks.get_state_label_set("s1") == {"a", "d"}
+    assert ks.get_label_set_of_state("s1") == {"a", "d"}
 
     # if the state doesn't exist, can't get the Label Set of it
     with pytest.raises(KripkeStructError) as error_info:
-        assert ks.get_state_label_set("s2")
+        assert ks.get_label_set_of_state("s2")
     assert str(error_info.value) == "Can't get the Label Set of a Non-Exisiting State"
 
 
@@ -147,11 +147,11 @@ def test_KS_remove_state():
     ks.add_states(states)
     ks.remove_state("s7")
     states.pop("s7")
-    assert ks.states == states
+    assert ks.get_states() == states
 
     # removing non-existing state won't have any effect
     ks.remove_state("s8")
-    assert ks.states == states
+    assert ks.get_states() == states
 
 
 def test_KS_remove_states():
@@ -171,7 +171,7 @@ def test_KS_remove_states():
     ks.remove_states(["s6", "s7"])
     states.pop("s7")
     states.pop("s6")
-    assert ks.states == states
+    assert ks.get_states() == states
 
 
 def test_KS_set_starts():
@@ -188,12 +188,12 @@ def test_KS_set_starts():
 
     starts = ["s1", "s4"]
     ks.set_starts(starts)
-    assert ks.starts == set(starts)
+    assert ks._starts == set(starts)
 
     # resetting the start states is allowed
     starts = ["s1"]
     ks.set_starts(starts)
-    assert ks.starts == set(starts)
+    assert ks._starts == set(starts)
 
     # if state doesn't exist, can't set as start state
     with pytest.raises(KripkeStructError) as error_info:
@@ -215,7 +215,7 @@ def test_KS_get_starts():
 
     starts = ["s1", "s4"]
     ks.set_starts(starts)
-    assert set(ks.get_starts()) == set(starts)
+    assert ks.get_starts() == set(starts)
 
 
 def test_KS_add_trans():
@@ -325,6 +325,30 @@ def test_KS_remove_trans():
     trans = {"s2": ["s4"]}
     ks.remove_trans(trans)
     assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"], "s3": ["s4", "s1"], "s4": []}
+
+
+def test_KS_reverse_all_trans():
+    ks = KripkeStruct()
+    atoms = ["a", "b", "c", "d"]
+    ks.set_atoms(atoms)
+    states = {
+        "s1": 0b1000,  # s1 has labels "a"
+        "s2": 0b1100,  # s2 has labels "a", "b"
+        "s3": 0b0110,  # s3 has labels "b", "c"
+        "s4": 0b0111,  # s4 has labels "b", "c", "d"
+    }
+    ks.add_states(states)
+    ks.set_starts(["s1"])
+    trans = {
+        "s1": ["s2"],  # a -> ab
+        "s2": ["s3", "s4"],  # ab -> bc
+        "s3": ["s4", "s1"],  # bc -> bcd, a
+        "s4": ["s2"],  # bcd -> ab
+    }
+    ks.add_trans(trans)
+
+    ks.reverse_all_trans()
+    assert ks.get_trans() == {"s1": ["s3"], "s2": ["s1", "s4"], "s3": ["s2"], "s4": ["s2", "s3"]}
 
 
 def test_KS_get_SCCs():

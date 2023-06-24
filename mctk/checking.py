@@ -63,27 +63,28 @@ def SAT_atom(ks: KripkeStruct, atomic_property: str) -> Set[str]:
 
     Args:
         ks: a Kripke Structure
-        atomic_property: an atomic propositional property represented as a string
+        atomic_property: an Atomic Propositional Property represented as a string
 
     Returns:
-        a set of states where the atomic propositional property is satisfied
+        a set of states where the Atomic Propositional Property is satisfied
 
     Raises:
-        KripkeStructError: if the atomic property is not in the Kripke Structure
+        KripkeStructError: if the Atomic Property is not in the Kripke Structure
 
     """
     sat_states = set()
+    state_names = ks.get_states().keys()
 
     if atomic_property == "True":
-        return set(ks.states.keys())
+        return set(state_names)
     if atomic_property == "False":
         return set()
-    if atomic_property not in ks.atoms:
+    if atomic_property not in ks.get_atoms():
         raise KripkeStructError("Can't check on an atom that's not in the Kripke Structure")
 
-    for state in ks.states:
+    for state in state_names:
         # get the set of labels for the state
-        label_set = ks.get_state_label_set(state)
+        label_set = ks.get_label_set_of_state(state)
 
         # if the atomic property is in the Label Set, then this state satisfies the atomic property
         if atomic_property in label_set:
@@ -106,7 +107,7 @@ def NOT(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
 
     """
     # complement of the set
-    return set(ks.states.keys()) - property1
+    return set(ks.get_states().keys()) - property1
 
 
 def AND(property1: Set[str], property2: Set[str]) -> Set[str]:
@@ -197,9 +198,9 @@ def EX(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
     """
     sat_states = set()
 
-    for state in ks.states:
+    for state in ks.get_states():
         # get the successors of the state
-        successors = ks.trans[state]
+        successors = ks.get_trans()[state]
 
         for successor in successors:
             # test if the successors satisfy the property
@@ -253,7 +254,7 @@ def EU(ks: KripkeStruct, property1: Set[str], property2: Set[str]) -> Set[str]:
         # get the predecessors of all states in "sat_states"
         predecessors = set()
         for state in sat_states:
-            predecessors = predecessors | set(ks.trans_inverted[state])
+            predecessors = predecessors | set(ks.get_trans_inverted()[state])
 
         # add states that can reach "sat_states" in 1 step, and also satisfy property1
         sat_states = sat_states | (property1 & predecessors)
@@ -281,7 +282,7 @@ def EF(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
 
     """
     # EF p = E true U p
-    return EU(ks, set(ks.states.keys()), property1)
+    return EU(ks, set(ks.get_states().keys()), property1)
 
 
 def AG(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
@@ -320,7 +321,7 @@ def EG(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
     # where we remove all states that do not satisfy property
     # since we need to modify the reversed graph, we create a deepcopy of self
     sub_graph = deepcopy(ks)
-    for state in ks.states:
+    for state in ks.get_states():
         if state not in property1:
             sub_graph.remove_state(state)
 
@@ -346,7 +347,7 @@ def EG(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
         # get the predecessors of all states in "sat_states"
         predecessors = set()
         for state in sat_states:
-            predecessors = predecessors | set(sub_graph.trans_inverted[state])
+            predecessors = predecessors | set(sub_graph.get_trans_inverted()[state])
 
         # add states that can reach "sat_states" in 1 step
         sat_states = sat_states | predecessors

@@ -339,7 +339,7 @@ class KripkeStruct:
         for state, next_states in trans.items():
             for next_state in next_states:
                 # if a Transition doesn't exist, can't remove it
-                if next_state not in self._trans[state]:
+                if (state not in self._trans) or (next_state not in self._trans[state]):
                     raise KripkeStructError("Can't remove a Non-Existing Transition")
                 # removing a Transition will also update the Inverted Transitions
                 self._trans[state].remove(next_state)

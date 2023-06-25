@@ -58,7 +58,7 @@ def test_KS_set_atoms():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    assert ks._atoms == tuple(atoms)
+    assert ks._atoms == ("a", "b", "c", "d")
 
     # if any state exists, can't reset atoms
     with pytest.raises(KripkeStructError) as error_info:
@@ -72,7 +72,7 @@ def test_KS_get_atoms():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    assert ks.get_atoms() == tuple(atoms)
+    assert ks.get_atoms() == ("a", "b", "c", "d")
 
 
 def test_KS_add_state():
@@ -231,12 +231,12 @@ def test_KS_set_starts():
 
     starts = ["s1", "s4"]
     ks.set_starts(starts)
-    assert ks._starts == set(starts)
+    assert ks._starts == {"s1", "s4"}
 
     # resetting the start states is allowed
     starts = ["s1"]
     ks.set_starts(starts)
-    assert ks._starts == set(starts)
+    assert ks._starts == {"s1"}
 
     # if state doesn't exist, can't set as start state
     with pytest.raises(KripkeStructError) as error_info:
@@ -258,7 +258,7 @@ def test_KS_get_starts():
 
     starts = ["s1", "s4"]
     ks.set_starts(starts)
-    assert ks.get_starts() == set(starts)
+    assert ks.get_starts() == {"s1", "s4"}
 
 
 def test_KS_add_trans():

@@ -188,8 +188,8 @@ def test_ESMC_EG():
     # change s5's label to {"b", "d"}
     # change s6's label to {"c", "d"}
     tmp_ks = deepcopy(ks)
-    tmp_ks.get_states()["s5"] = 0b0101
-    tmp_ks.get_states()["s6"] = 0b0011
+    tmp_ks.set_label_of_state("s5", 0b0101)
+    tmp_ks.set_label_of_state("s6", 0b0011)
 
     sat_states = EG(tmp_ks, SAT_atom(tmp_ks, "a"))
     assert sat_states == set()
@@ -211,7 +211,7 @@ def test_ESMC_EG():
 def test_ESMC_AF():
     # change s7 to "", which is empty set
     tmp_ks = deepcopy(ks)
-    tmp_ks.get_states()["s7"] = 0b0000
+    tmp_ks.set_label_of_state("s7", 0b0000)
 
     sat_states = AF(tmp_ks, SAT_atom(tmp_ks, "a"))
     assert sat_states == {"s1", "s2"}

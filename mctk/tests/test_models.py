@@ -22,7 +22,7 @@ def test_KS_default_init():
 
 
 # Tests for KripkeStruct(ks_json)
-def test_KS_file_init():
+def test_KS_json_init():
     ks_json = {
         "Atoms": ["a", "b", "c", "d"],
         "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
@@ -80,17 +80,18 @@ def test_KS_add_state():
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
     ks.add_state("s1", 0b1000)
-    assert ks._states == {"s1": 0b1000}
+    ks.add_state("s2", 0b1100)
+    assert ks._states == {"s1": 0b1000, "s2": 0b1100}
 
     # if the state name exists, can't add again
     with pytest.raises(KripkeStructError) as error_info:
         ks.add_state("s1", 0b1111)
-    assert str(error_info.value) == "Can't add an Exisiting State Name again"
+    assert str(error_info.value) == "Can't add an Existing State Name again"
 
-    # if the state label exisits, can't add again
+    # if the state label exists, can't add again
     with pytest.raises(KripkeStructError) as error_info:
-        ks.add_state("s8", 0b1000)
-    assert str(error_info.value) == "Can't add an Exisiting State Label again"
+        ks.add_state("s3", 0b1000)
+    assert str(error_info.value) == "Can't add an Existing State Label again"
 
 
 def test_KS_add_states():
@@ -118,17 +119,50 @@ def test_KS_get_states():
     assert ks.get_states() == {"s1": 0b1000}
 
 
-def test_KS_get_label_set_of_state():
+def test_KS_set_label_of_state():
+    ks = KripkeStruct()
+    atoms = ["a", "b", "c", "d"]
+    ks.set_atoms(atoms)
+    ks.add_state("s1", 0b1000)
+    ks.set_label_of_state("s1", 0b0011)
+    assert ks.get_states() == {"s1": 0b0011}
+
+    # if the State Name doesn't exist, can't set the Label of it
+    with pytest.raises(KripkeStructError) as error_info:
+        ks.set_label_of_state("s2", 0b1111)
+    assert str(error_info.value) == "Can't set the Label of a Non-Existing State"
+
+    # if the Label has been assigned to a differnt State Name, can't assign it
+    with pytest.raises(KripkeStructError) as error_info:
+        ks.add_state("s2", 0b1111)
+        ks.set_label_of_state("s2", 0b0011)
+    assert str(error_info.value) == "Can't assign an Existing State Label to a Different State Name"
+
+    # assigning the Label to its corresponding State Name, wont' have any effect
+    ks.set_label_of_state("s2", 0b1111)
+    assert ks.get_states() == {"s1": 0b0011, "s2": 0b1111}
+
+    # if the Label is assigned to a differnt State Name, can't assign it using []
+    with pytest.raises(ValueError) as error_info:
+        ks._states["s2"] = 0b0011
+    assert str(error_info.value) == "Can't assign an existing value to a differnt key"
+
+    # assigning the Label to its corresponding State Name using [], wont' have any effect
+    ks._states["s2"] = 0b1111
+    assert ks.get_states() == {"s1": 0b0011, "s2": 0b1111}
+
+
+def test_KS_get_label_of_state():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
     ks.add_state("s1", 0b1001)
-    assert ks.get_label_set_of_state("s1") == {"a", "d"}
+    assert ks.get_label_of_state("s1") == {"a", "d"}
 
-    # if the state doesn't exist, can't get the Label Set of it
+    # if the state doesn't exist, can't get the Label of it
     with pytest.raises(KripkeStructError) as error_info:
-        assert ks.get_label_set_of_state("s2")
-    assert str(error_info.value) == "Can't get the Label Set of a Non-Exisiting State"
+        assert ks.get_label_of_state("s2")
+    assert str(error_info.value) == "Can't get the Label of a Non-Existing State"
 
 
 def test_KS_remove_state():
@@ -198,7 +232,7 @@ def test_KS_set_starts():
     # if state doesn't exist, can't set as start state
     with pytest.raises(KripkeStructError) as error_info:
         ks.set_starts(["s5"])
-    assert str(error_info.value) == "Can't set a Non-Exisiting State as Start State"
+    assert str(error_info.value) == "Can't set a Non-Existing State as Start State"
 
 
 def test_KS_get_starts():
@@ -244,13 +278,13 @@ def test_KS_add_trans():
     with pytest.raises(KripkeStructError) as error_info:
         trans = {"s7": ["s1"]}
         ks.add_trans(trans)
-    assert str(error_info.value) == "Can't add Transition from a Non-Exisiting Source State"
+    assert str(error_info.value) == "Can't add Transition from a Non-Existing Source State"
 
     # if target state doesn't exist, can't add transition to it
     with pytest.raises(KripkeStructError) as error_info:
         trans = {"s1": ["s7"]}
         ks.add_trans(trans)
-    assert str(error_info.value) == "Can't add Transition to a Non-Exisiting Target State"
+    assert str(error_info.value) == "Can't add Transition to a Non-Existing Target State"
 
 
 def test_KS_get_trans():
@@ -353,7 +387,7 @@ def test_KS_reverse_all_trans():
 
 def test_KS_get_SCCs():
     ks_json = {
-        "Atoms": ("a", "b", "c", "d"),
+        "Atoms": ["a", "b", "c", "d"],
         "States": {
             "s1": 0b1000,  # s1 has labels "a"
             "s2": 0b1100,  # s2 has labels "a", "b"

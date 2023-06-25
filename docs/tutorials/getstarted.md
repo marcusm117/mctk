@@ -125,7 +125,7 @@ assert sat_states == set()
 
 ``` python
 ks_json = {
-   "Atoms": ("a", "b", "c", "d"),
+   "Atoms": ["a", "b", "c", "d"],
    "States": {
       "s1": 0b1000,  # s1 has labels "a"
       "s2": 0b1100,  # s2 has labels "a", "b"

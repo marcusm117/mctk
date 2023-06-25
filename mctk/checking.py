@@ -7,7 +7,7 @@ We plan to support Symbolic Model Checking and Bounded Model Checking in the fut
 Examples:
     >>> from mctk import *
     >>> ks_json = {
-    ...     "Atoms": ("a", "b", "c", "d"),
+    ...     "Atoms": ["a", "b", "c", "d"],
     ...     "States": {
     ...         "s1": 0b1000,  # s1 has labels "a"
     ...         "s2": 0b1100,  # s2 has labels "a", "b"
@@ -84,7 +84,7 @@ def SAT_atom(ks: KripkeStruct, atomic_property: str) -> Set[str]:
 
     for state in state_names:
         # get the set of labels for the state
-        label_set = ks.get_label_set_of_state(state)
+        label_set = ks.get_label_of_state(state)
 
         # if the atomic property is in the Label Set, then this state satisfies the atomic property
         if atomic_property in label_set:

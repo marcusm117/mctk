@@ -17,8 +17,8 @@ def test_KS_default_init():
     assert ks._atoms == ()
     assert ks._states == {}
     assert ks._starts == set()
-    assert ks._trans == defaultdict(list)
-    assert ks._trans_inverted == defaultdict(list)
+    assert ks._trans == defaultdict(set)
+    assert ks._trans_inverted == defaultdict(set)
 
 
 # Tests for KripkeStruct(ks_json)
@@ -34,7 +34,7 @@ def test_KS_json_init():
     assert ks._atoms == ("a", "b", "c", "d")
     assert ks._states == {"s1": 8, "s2": 12, "s3": 6, "s4": 7}
     assert ks._starts == {"s1"}
-    assert ks._trans == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]}
+    assert ks._trans == {"s1": {"s2"}, "s2": {"s3", "s4"}, "s3": {"s4"}}
 
 
 # Tests for ks.__str__()
@@ -43,14 +43,14 @@ def test_KS_str_rep():
         "Atoms": ["a", "b", "c", "d"],
         "States": {"s1": 8, "s2": 12, "s3": 6, "s4": 7},
         "Starts": ["s1"],
-        "Trans": {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4"]},
+        "Trans": {"s1": ["s2"], "s2": ["s3"], "s3": ["s4"]},
     }
     ks = KripkeStruct(ks_json)
     assert str(ks) == (
         "Atoms: ('a', 'b', 'c', 'd')\n"
         + "States: {'s1': 8, 's2': 12, 's3': 6, 's4': 7}\n"
         + "Starts: {'s1'}\n"
-        + "Trans: {'s1': ['s2'], 's2': ['s3', 's4'], 's3': ['s4']}"
+        + "Trans: {'s1': {'s2'}, 's2': {'s3'}, 's3': {'s4'}}"
     )
 
 
@@ -58,7 +58,7 @@ def test_KS_set_atoms():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    assert ks._atoms == tuple(atoms)
+    assert ks._atoms == ("a", "b", "c", "d")
 
     # if any state exists, can't reset atoms
     with pytest.raises(KripkeStructError) as error_info:
@@ -72,7 +72,7 @@ def test_KS_get_atoms():
     ks = KripkeStruct()
     atoms = ["a", "b", "c", "d"]
     ks.set_atoms(atoms)
-    assert ks.get_atoms() == tuple(atoms)
+    assert ks.get_atoms() == ("a", "b", "c", "d")
 
 
 def test_KS_add_state():
@@ -117,6 +117,14 @@ def test_KS_get_states():
     ks.set_atoms(atoms)
     ks.add_state("s1", 0b1000)
     assert ks.get_states() == {"s1": 0b1000}
+
+
+def test_KS_get_state_names():
+    ks = KripkeStruct()
+    atoms = ["a", "b", "c", "d"]
+    ks.set_atoms(atoms)
+    ks.add_state("s1", 0b1000)
+    assert ks.get_state_names() == {"s1"}
 
 
 def test_KS_set_label_of_state():
@@ -183,9 +191,10 @@ def test_KS_remove_state():
     states.pop("s7")
     assert ks.get_states() == states
 
-    # removing non-existing state won't have any effect
-    ks.remove_state("s8")
-    assert ks.get_states() == states
+    # if the State Name doesn't exist, can't remove it
+    with pytest.raises(KripkeStructError) as error_info:
+        ks.remove_state("s8")
+    assert str(error_info.value) == "Can't remove a Non-Existing State"
 
 
 def test_KS_remove_states():
@@ -222,12 +231,12 @@ def test_KS_set_starts():
 
     starts = ["s1", "s4"]
     ks.set_starts(starts)
-    assert ks._starts == set(starts)
+    assert ks._starts == {"s1", "s4"}
 
     # resetting the start states is allowed
     starts = ["s1"]
     ks.set_starts(starts)
-    assert ks._starts == set(starts)
+    assert ks._starts == {"s1"}
 
     # if state doesn't exist, can't set as start state
     with pytest.raises(KripkeStructError) as error_info:
@@ -249,7 +258,7 @@ def test_KS_get_starts():
 
     starts = ["s1", "s4"]
     ks.set_starts(starts)
-    assert ks.get_starts() == set(starts)
+    assert ks.get_starts() == {"s1", "s4"}
 
 
 def test_KS_add_trans():
@@ -272,7 +281,7 @@ def test_KS_add_trans():
         "s4": ["s2"],  # bcd -> ab
     }
     ks.add_trans(trans)
-    assert trans == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4", "s1"], "s4": ["s2"]}
+    assert ks._trans == {"s1": {"s2"}, "s2": {"s3", "s4"}, "s3": {"s4", "s1"}, "s4": {"s2"}}
 
     # if source state doesn't exist, can't add transition from it
     with pytest.raises(KripkeStructError) as error_info:
@@ -306,7 +315,7 @@ def test_KS_get_trans():
         "s4": ["s2"],  # bcd -> ab
     }
     ks.add_trans(trans)
-    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3", "s4"], "s3": ["s4", "s1"], "s4": ["s2"]}
+    assert ks.get_trans() == {"s1": {"s2"}, "s2": {"s3", "s4"}, "s3": {"s4", "s1"}, "s4": {"s2"}}
 
 
 def test_KS_get_trans_inverted():
@@ -328,7 +337,7 @@ def test_KS_get_trans_inverted():
         "s4": ["s2"],  # bcd -> ab
     }
     ks.add_trans(trans)
-    assert ks.get_trans_inverted() == {"s1": ["s3"], "s2": ["s1", "s4"], "s3": ["s2"], "s4": ["s2", "s3"]}
+    assert ks.get_trans_inverted() == {"s1": {"s3"}, "s2": {"s1", "s4"}, "s3": {"s2"}, "s4": {"s2", "s3"}}
 
 
 def test_KS_remove_trans():
@@ -353,12 +362,12 @@ def test_KS_remove_trans():
 
     trans = {"s2": ["s4"], "s4": ["s2"]}
     ks.remove_trans(trans)
-    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"], "s3": ["s4", "s1"], "s4": []}
+    assert ks.get_trans() == {"s1": {"s2"}, "s2": {"s3"}, "s3": {"s4", "s1"}, "s4": set()}
 
-    # removing non-existing transition won't have any effect
-    trans = {"s2": ["s4"]}
-    ks.remove_trans(trans)
-    assert ks.get_trans() == {"s1": ["s2"], "s2": ["s3"], "s3": ["s4", "s1"], "s4": []}
+    # if a Transition doesn't exist, can't remove it
+    with pytest.raises(KripkeStructError) as error_info:
+        ks.remove_trans({"s2": ["s4"]})
+    assert str(error_info.value) == "Can't remove a Non-Existing Transition"
 
 
 def test_KS_reverse_all_trans():
@@ -382,7 +391,7 @@ def test_KS_reverse_all_trans():
     ks.add_trans(trans)
 
     ks.reverse_all_trans()
-    assert ks.get_trans() == {"s1": ["s3"], "s2": ["s1", "s4"], "s3": ["s2"], "s4": ["s2", "s3"]}
+    assert ks.get_trans() == {"s1": {"s3"}, "s2": {"s1", "s4"}, "s3": {"s2"}, "s4": {"s2", "s3"}}
 
 
 def test_KS_get_SCCs():
@@ -448,5 +457,5 @@ def test_KS_remove_states_will_remove_related_trans():
     ks.add_trans(trans)
 
     ks.remove_state("s2")
-    assert ks.get_trans() == {'s1': [], 's3': ['s4', 's1'], 's4': []}
-    assert ks.get_trans_inverted() == {'s3': [], 's4': ['s3'], 's1': ['s3']}
+    assert ks.get_trans() == {'s1': set(), 's3': {'s4', 's1'}, 's4': set()}
+    assert ks.get_trans_inverted() == {'s3': set(), 's4': {'s3'}, 's1': {'s3'}}

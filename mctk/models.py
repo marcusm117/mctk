@@ -27,21 +27,7 @@ class _UniqueValueDict(UserDict):
 
 
 class KripkeStructError(Exception):
-    """Exceptions raised by all instance functions in class KripkeStruct.
-
-    1. Raised when trying to reset Atoms after States are Created
-    2. Raised when trying to add an Existing State Name again
-    3. Raised when trying to add an Existing State Label again
-    4. Raised when tyring to set the Label of a Non-Existing State
-    6. Raised when trying to set an Existing State Label to a Different State Name
-    7. Raised when trying to get the Label of a Non-Existing State
-    5. Raised when trying to perform model checking on a Non-Existing Atom
-    6. Raised when trying set a Non-Existing State as Start State
-    7. Raised when trying to add Transition from a Non-Existing Source State
-    8. Raised when trying to add Transition to a Non-Existing Target State
-    9. Raised when trying to check an Atomic Property that's not in the Kripke Structure
-
-    """
+    """Exceptions raised by methods in class KripkeStruct."""
 
 
 class KripkeStruct:
@@ -55,8 +41,8 @@ class KripkeStruct:
         _atoms (tuple): Atoms, can only be reset before any state is created
         _states (_UniqueValueDict): States, Key is the state name, Value is the state label
         _starts (set): Start States
-        _trans (defaultdict): Transitions, Key is the source state, Value is a list of target states
-        _trans_inverted (defaultdict): Inverted Transitions, Key is the target state, Value is a list of source states
+        _trans (defaultdict): Transitions, Key is the source state, Value is a set of target states
+        _trans_inverted (defaultdict): Inverted Transitions, Key is the target state, Value is a set of source states
 
     """
 
@@ -64,8 +50,8 @@ class KripkeStruct:
         self._atoms = ()
         self._states = _UniqueValueDict()
         self._starts = set()
-        self._trans = defaultdict(list)
-        self._trans_inverted = defaultdict(list)
+        self._trans = defaultdict(set)
+        self._trans_inverted = defaultdict(set)
 
         if model_json is not None:
             self.set_atoms(model_json["Atoms"])
@@ -155,6 +141,15 @@ class KripkeStruct:
         """
         return dict(self._states)
 
+    def get_state_names(self) -> Set[str]:
+        """Get just State Names of the Kripke Structure.
+
+        Returns:
+            a set of strings representing the State Names
+
+        """
+        return set(self._states.keys())
+
     def set_label_of_state(self, state: str, label: int) -> None:
         """Given an existing State Name, (re)set the State Label.
 
@@ -195,7 +190,7 @@ class KripkeStruct:
             a set of strings representing the State Label, instead of the binary form
 
         Raises:
-            KripkeStructError: if the State Name doesn't exist, can't get the Label Set of it
+            KripkeStructError: if the State Name doesn't exist, can't get the Label of it
 
         """
         # if the State Name doesn't exist, can't get the Label of it
@@ -221,18 +216,24 @@ class KripkeStruct:
         Args:
             state: a string representing the State Name
 
+        Raises:
+            KripkeStructError: if the State Name doesn't exist, can't remove it
+
         """
-        if state in self._states:
-            self._states.pop(state)
-            # removing state will remove related transitions
-            if state in self._trans:
-                next_states = self._trans.pop(state)
-                for next_state in next_states:
-                    self._trans_inverted[next_state].remove(state)
-            if state in self._trans_inverted:
-                prev_states = self._trans_inverted.pop(state)
-                for prev_state in prev_states:
-                    self._trans[prev_state].remove(state)
+        # if the State Name doesn't exist, can't remove it
+        if state not in self._states:
+            raise KripkeStructError("Can't remove a Non-Existing State")
+        self._states.pop(state)
+
+        # removing a state will remove all related transitions
+        if state in self._trans:
+            next_states = self._trans.pop(state)
+            for next_state in next_states:
+                self._trans_inverted[next_state].remove(state)
+        if state in self._trans_inverted:
+            prev_states = self._trans_inverted.pop(state)
+            for prev_state in prev_states:
+                self._trans[prev_state].remove(state)
 
     def remove_states(self, states: List[str]) -> None:
         """Remove multiple States from the Kripke Structure.
@@ -273,7 +274,7 @@ class KripkeStruct:
         """
         return self._starts
 
-    def add_trans(self, trans: Dict[str, List[str]]) -> None:
+    def add_trans(self, trans: Dict[str, Set[str]]) -> None:
         """Add multiple Transitions to the Kripke Structure.
 
         Args:
@@ -282,6 +283,11 @@ class KripkeStruct:
         Raises:
             KripkeStructError: if Source or Target State doesn't exist, can't add transition
 
+        Note:
+            The parameter "trans" should be a dict whose value is a list, to stay compatible with the JSON format.
+            However, internally, the field "_trans" is stored as a dict whose value is a set for efficiency.
+            For more information about list v.s. set, see:
+            https://stackoverflow.com/questions/2831212/python-sets-vs-lists
         """
         for state, next_states in trans.items():
             # if source state doesn't exist, can't add transition
@@ -292,25 +298,25 @@ class KripkeStruct:
                 # if target state doesn't exist, can't add transition
                 if next_state not in self._states:
                     raise KripkeStructError("Can't add Transition to a Non-Existing Target State")
-                self._trans[state].append(next_state)
-                # adding Transitions will also update the Inverted Transitions
+                # adding a Transition will also update the Inverted Transitions,
                 # which will be used to remove related Transitions when revmoing a State
-                self._trans_inverted[next_state].append(state)
+                self._trans[state].add(next_state)
+                self._trans_inverted[next_state].add(state)
 
-    def get_trans(self) -> defaultdict[str, List[str]]:
+    def get_trans(self) -> defaultdict[str, Set[str]]:
         """Get Transitions of the Kripke Structure.
 
         Returns:
-            a defaultdict, Key is the Source State Name, Value is a list of Target State Names
+            a defaultdict, Key is the Source State Name, Value is a set of Target State Names
 
         """
         return self._trans
 
-    def get_trans_inverted(self) -> defaultdict[str, List[str]]:
+    def get_trans_inverted(self) -> defaultdict[str, Set[str]]:
         """Get Inverted Transitions of the Kripke Structure.
 
         Returns:
-            a defaultdict, Key is the Target State Name, Value is a list of Source State Names
+            a defaultdict, Key is the Target State Name, Value is a set of Source State Names
 
         """
         return self._trans_inverted
@@ -321,12 +327,23 @@ class KripkeStruct:
         Args:
             trans: a dict, Key is the Source State Name, Value is a list of Target State Names
 
+        Raises:
+            KripkeStructError: if a Transition doesn't exist, can't remove it
+
+        Note:
+            The parameter "trans" should be a dict whose value is a list for efficiency,
+            since it will only be iterated once.
+            However, internally, the field "_trans" is stored as a dict whose value is a set for efficiency.
+
         """
         for state, next_states in trans.items():
             for next_state in next_states:
-                if state in self._states and next_state in self._trans[state]:
-                    self._trans[state].remove(next_state)
-                    self._trans_inverted[next_state].remove(state)
+                # if a Transition doesn't exist, can't remove it
+                if (state not in self._trans) or (next_state not in self._trans[state]):
+                    raise KripkeStructError("Can't remove a Non-Existing Transition")
+                # removing a Transition will also update the Inverted Transitions
+                self._trans[state].remove(next_state)
+                self._trans_inverted[next_state].remove(state)
 
     def reverse_all_trans(self) -> None:
         """Reverse all Transitions in the Kripke Structure.

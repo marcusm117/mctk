@@ -12,7 +12,7 @@ Users can use functions that implements CTL operators to formally verify if a Kr
 
 ## Installation
 
-Get the latest version of `mctk` from PyPI. Note that the registered name is 'mctk-py' on PyPI due to the strict typo-squatting prevention mechanism of the registry. However, when using the library, you should import it as 'mctk'.
+Get the latest version of `mctk` from PyPI. Note that the registered name is `mctk-py` on PyPI due to the strict typo-squatting prevention mechanism of the registry. However, when using the library, you should import it as `mctk`.
 
    ``` bash
    pip3 install mctk-py
@@ -50,9 +50,9 @@ We use a `Makefile` as a command registry:
 - `make test`: run automated tests with `pytest`
 - `make coverage`: run automated tests with `pytest` and collect coverage information
 
-## Examples
+## Usage
 
-### Create a Kripke Structure from scratch
+### Create a Kripke Structure from Scratch
 
 ``` python
 from mctk import *
@@ -80,7 +80,7 @@ ks.set_starts(["s0"])
 ks.add_trans({"s0": ["s1"], "s1": ["s0"]})
 ```
 
-### Checking simple CTL formula on the Kripke Structure
+### Checking Simple CTL Formula on the Kripke Structure
 
 ``` python
 # check if the Kripke Structure satisfies the CTL formula: EX p
@@ -103,7 +103,7 @@ sat_states = EU(ks, SAT_atom(ks, "p"), SAT_atom(ks, "q"))
 assert sat_states == {"s0", "s1"}
 ```
 
-### Checking composite CTL formula on the Kripke Structure
+### Checking Composite CTL Formula on the Kripke Structure
 
 ``` python
 # check if the Kripke Structure satisfies the CTL formula: EX (p AND EX q)
@@ -121,11 +121,11 @@ sat_states = EG(ks, AU(ks, SAT_atom(ks, "p"), NOT(ks, SAT_atom(ks, "q"))))
 assert sat_states == set()
 ```
 
-### Checking CTL formula on a more complex Kripke Structure
+### Checking CTL formula on a Complex Kripke Structure
 
 ``` python
 ks_json = {
-   "Atoms": ("a", "b", "c", "d"),
+   "Atoms": ["a", "b", "c", "d"],
    "States": {
       "s1": 0b1000,  # s1 has labels "a"
       "s2": 0b1100,  # s2 has labels "a", "b"

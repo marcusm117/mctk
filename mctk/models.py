@@ -7,22 +7,39 @@ We plan to support other Transition Systems as well in the future.
 """
 
 # Standard Libraries
-from typing import List, Dict, Set
-from collections import defaultdict
+from typing import List, Dict, Set, Tuple
+from collections import defaultdict, UserDict
 from copy import deepcopy
+
+
+class _UniqueValueDict(UserDict):
+    def __setitem__(self, key, value):
+        # if the value is already assigned to the key, do nothing
+        if (key in self) and (self.__getitem__(key) == value):
+            return
+
+        # if the value is already assigned to a different key, raise an error
+        # doesn't matter if the key exists or not
+        if value in self.values():
+            raise ValueError("Can't assign an existing value to a differnt key")
+
+        super().__setitem__(key, value)
 
 
 class KripkeStructError(Exception):
     """Exceptions raised by all instance functions in class KripkeStruct.
 
-    Raised when trying to reset Atoms after States are Created
-    Raised when trying to add an Exisiting State Name again
-    Raised when trying to add an Exisiting State Label again
-    Raised when trying to get the Label Set of a Non-Exisiting State
-    Raised when trying to perform model checking on a Non-Exisiting Atom
-    Raised when trying set a Non-Exisiting State as Start State
-    Raised when trying to add Transition from a Non-Exisiting Source State
-    Raised when trying to add Transition to a Non-Exisiting Target State
+    1. Raised when trying to reset Atoms after States are Created
+    2. Raised when trying to add an Existing State Name again
+    3. Raised when trying to add an Existing State Label again
+    4. Raised when tyring to set the Label of a Non-Existing State
+    6. Raised when trying to set an Existing State Label to a Different State Name
+    7. Raised when trying to get the Label of a Non-Existing State
+    5. Raised when trying to perform model checking on a Non-Existing Atom
+    6. Raised when trying set a Non-Existing State as Start State
+    7. Raised when trying to add Transition from a Non-Existing Source State
+    8. Raised when trying to add Transition to a Non-Existing Target State
+    9. Raised when trying to check an Atomic Property that's not in the Kripke Structure
 
     """
 
@@ -35,20 +52,20 @@ class KripkeStruct:
     https://en.wikipedia.org/wiki/Kripke_structure_(model_checking).
 
     Attributes:
-        atoms (tuple): Atoms
-        states (dict): States, Key is the state name, Value is the state label
-        starts (set): Start States
-        trans (defaultdict): Transitions, Key is the source state, Value is a list of target states
-        trans_inverted (defaultdict): Inverted Transitions, Key is the target state, Value is a list of source states
+        _atoms (tuple): Atoms, can only be reset before any state is created
+        _states (_UniqueValueDict): States, Key is the state name, Value is the state label
+        _starts (set): Start States
+        _trans (defaultdict): Transitions, Key is the source state, Value is a list of target states
+        _trans_inverted (defaultdict): Inverted Transitions, Key is the target state, Value is a list of source states
 
     """
 
     def __init__(self, model_json=None):
-        self.atoms = ()
-        self.states = {}
-        self.starts = set()
-        self.trans = defaultdict(list)
-        self.trans_inverted = defaultdict(list)
+        self._atoms = ()
+        self._states = _UniqueValueDict()
+        self._starts = set()
+        self._trans = defaultdict(list)
+        self._trans_inverted = defaultdict(list)
 
         if model_json is not None:
             self.set_atoms(model_json["Atoms"])
@@ -58,10 +75,10 @@ class KripkeStruct:
 
     def __str__(self) -> str:
         return (
-            f"Atoms: {self.atoms}\n"
-            + f"States: {self.states}\n"
-            + f"Starts: {self.starts}\n"
-            + f"Trans: {dict(self.trans)}"
+            f"Atoms: {self._atoms}\n"
+            + f"States: {dict(self._states)}\n"
+            + f"Starts: {self._starts}\n"
+            + f"Trans: {dict(self._trans)}"
         )
 
     def set_atoms(self, atoms: List[str]) -> None:
@@ -73,20 +90,24 @@ class KripkeStruct:
         Raises:
             KripkeStructError: if any state exists, can't reset atoms
 
+        Note:
+            The parameter "atoms" should be a list to stay compatible with the JSON format.
+            However, internally, the field "_atoms" is stored as a tuple for efficiency.
+
         """
         # if any state exists, can't reset atoms
-        if self.states:
+        if self._states:
             raise KripkeStructError("Can't reset Atoms after States are Created")
-        self.atoms = tuple(atoms)
+        self._atoms = tuple(atoms)
 
-    def get_atoms(self) -> List[str]:
+    def get_atoms(self) -> Tuple[str]:
         """Get Atoms of the Kripke Structure.
 
         Returns:
-            a list of strings representing the Atoms
+            a tuple of strings representing the Atoms
 
         """
-        return list(self.atoms)
+        return self._atoms
 
     def add_state(self, state: str, label: int) -> None:
         """Add a State to the Kripke Structure.
@@ -102,15 +123,15 @@ class KripkeStruct:
             label: an int representing the State Label, you are encouraged to input in the binary from
 
         Raises:
-            KripkeStructError: if a State Name or a State Label exisits, can't add again
+            KripkeStructError: if a State Name or a State Label exists, can't add again
 
         """
-        # if the state or the label exisits, can't add again
-        if state in self.states:
-            raise KripkeStructError("Can't add an Exisiting State Name again")
-        if label in self.states.values():
-            raise KripkeStructError("Can't add an Exisiting State Label again")
-        self.states[state] = label
+        # if the state or the label exists, can't add again
+        if state in self._states:
+            raise KripkeStructError("Can't add an Existing State Name again")
+        if label in self._states.values():
+            raise KripkeStructError("Can't add an Existing State Label again")
+        self._states[state] = label
 
     def add_states(self, states: Dict[str, int]) -> None:
         """Add multiple States to the Kripke Structure.
@@ -119,7 +140,7 @@ class KripkeStruct:
             states: a dict, Key is the State Name, Value is the State Label
 
         Raises:
-            KripkeStructError: if a State Name or a State Label exisits, can't add again
+            KripkeStructError: if a State Name or a State Label exists, can't add again
 
         """
         for state, label in states.items():
@@ -132,38 +153,65 @@ class KripkeStruct:
             a dict, Key is the State Name, Value is the State Label
 
         """
-        return self.states
+        return dict(self._states)
 
-    def get_state_label_set(self, state: str) -> Set[str]:
-        """Given a State Name, get the State Labels.
+    def set_label_of_state(self, state: str, label: int) -> None:
+        """Given an existing State Name, (re)set the State Label.
 
-        For example, if the atoms = ("a", "b", "c", "d"), and the label = 0b1010,
-        then the label_set = {"a", "c"}.
+        Args:
+            state: a string representing the State Name
+            label: an int representing the State Label, you are encouraged to input in the binary from
+
+        Raises:
+            KripkeStructError: if the State Name doesn't exist, can't (re)set the State Label
+            KripkeStructError: if the Label has been assigned to a differnt State Name, can't assign it
+
+        """
+        # if the State Name doesn't exist, can't set the Label of it
+        if state not in self._states:
+            raise KripkeStructError("Can't set the Label of a Non-Existing State")
+
+        # if the Label is already assigned to the State Name, do nothing
+        if self._states[state] == label:
+            return
+
+        # if the Label is assigned to a differnt State Name, can't assign it
+        if label in self._states.values():
+            raise KripkeStructError("Can't assign an Existing State Label to a Different State Name")
+
+        self._states[state] = label
+
+    def get_label_of_state(self, state: str) -> Set[str]:
+        """Given a State Name, get the corresponding State Label.
+
+        For example, if atoms is ("a", "b", "c", "d"),
+        the State Name is "s1", and the State Label is 0b1010,
+        then get_label_of_state("s1") will return the set {"a", "c"}.
 
         Args:
             state: a string representing the State Name
 
         Returns:
-            a set of strings representing the State Label, instead of the original binary form
+            a set of strings representing the State Label, instead of the binary form
 
         Raises:
-            KripkeStructError: if the State Name doesn't exisit, can't get the Label Set of it
+            KripkeStructError: if the State Name doesn't exist, can't get the Label Set of it
 
         """
-        # if the state doesn't exisit, can't get the Label Set of it
-        if state not in self.states:
-            raise KripkeStructError("Can't get the Label Set of a Non-Exisiting State")
+        # if the State Name doesn't exist, can't get the Label of it
+        if state not in self._states:
+            raise KripkeStructError("Can't get the Label of a Non-Existing State")
 
-        # get the binary form of the label, then convert it to the Label Set
-        label = self.states[state]
-        length = len(self.atoms)
+        # get the binary form of the Label, then convert it to a set of atoms
+        label = self._states[state]
+        length = len(self._atoms)
         label_set = set()
 
-        # traverse the binary form of the label
+        # traverse the binary form of the Label
         for i in range(length):
-            # if the i-th bit is 1, then the (length - 1 - i)-th atom is in the Label Set
+            # if the i-th bit is 1, then the (length - 1 - i)-th atom is in the set
             if label & 1 << i:
-                label_set.add(self.atoms[length - 1 - i])
+                label_set.add(self._atoms[length - 1 - i])
 
         return label_set
 
@@ -174,17 +222,17 @@ class KripkeStruct:
             state: a string representing the State Name
 
         """
-        if state in self.states:
-            self.states.pop(state)
+        if state in self._states:
+            self._states.pop(state)
             # removing state will remove related transitions
-            if state in self.trans:
-                next_states = self.trans.pop(state)
+            if state in self._trans:
+                next_states = self._trans.pop(state)
                 for next_state in next_states:
-                    self.trans_inverted[next_state].remove(state)
-            if state in self.trans_inverted:
-                prev_states = self.trans_inverted.pop(state)
+                    self._trans_inverted[next_state].remove(state)
+            if state in self._trans_inverted:
+                prev_states = self._trans_inverted.pop(state)
                 for prev_state in prev_states:
-                    self.trans[prev_state].remove(state)
+                    self._trans[prev_state].remove(state)
 
     def remove_states(self, states: List[str]) -> None:
         """Remove multiple States from the Kripke Structure.
@@ -200,26 +248,30 @@ class KripkeStruct:
         """Set Start States of the Kripke Structure.
 
         Args:
-            starts: a list of strings representing the Start States
+            starts: a set of strings representing the Start States
 
         Raises:
-            KripkeStructError: if start state doesn't exist, can't set it
+            KripkeStructError: if a state doesn't exist, can't set it as a Start State
+
+        Note:
+            The parameter "starts" should be a list to stay compatible with the JSON format.
+            However, internally, the field "_starts" is stored as a set for efficiency.
 
         """
         for start in starts:
-            # if start state doesn't exist, can't set it
-            if start not in self.states:
-                raise KripkeStructError("Can't set a Non-Exisiting State as Start State")
-        self.starts = set(starts)
+            # if a state doesn't exist, can't set it as a Start State
+            if start not in self._states:
+                raise KripkeStructError("Can't set a Non-Existing State as Start State")
+        self._starts = set(starts)
 
-    def get_starts(self) -> List[str]:
+    def get_starts(self) -> Set[str]:
         """Get Start States of the Kripke Structure.
 
         Returns:
-            a list of strings representing the Start States
+            a set of strings representing the Start States
 
         """
-        return list(self.starts)
+        return self._starts
 
     def add_trans(self, trans: Dict[str, List[str]]) -> None:
         """Add multiple Transitions to the Kripke Structure.
@@ -233,35 +285,35 @@ class KripkeStruct:
         """
         for state, next_states in trans.items():
             # if source state doesn't exist, can't add transition
-            if state not in self.states:
-                raise KripkeStructError("Can't add Transition from a Non-Exisiting Source State")
+            if state not in self._states:
+                raise KripkeStructError("Can't add Transition from a Non-Existing Source State")
 
             for next_state in next_states:
                 # if target state doesn't exist, can't add transition
-                if next_state not in self.states:
-                    raise KripkeStructError("Can't add Transition to a Non-Exisiting Target State")
-                self.trans[state].append(next_state)
+                if next_state not in self._states:
+                    raise KripkeStructError("Can't add Transition to a Non-Existing Target State")
+                self._trans[state].append(next_state)
                 # adding Transitions will also update the Inverted Transitions
                 # which will be used to remove related Transitions when revmoing a State
-                self.trans_inverted[next_state].append(state)
+                self._trans_inverted[next_state].append(state)
 
-    def get_trans(self) -> Dict[str, List[str]]:
+    def get_trans(self) -> defaultdict[str, List[str]]:
         """Get Transitions of the Kripke Structure.
 
         Returns:
-            a dict, Key is the Source State Name, Value is a list of Target State Names
+            a defaultdict, Key is the Source State Name, Value is a list of Target State Names
 
         """
-        return dict(self.trans)
+        return self._trans
 
-    def get_trans_inverted(self) -> Dict[str, List[str]]:
+    def get_trans_inverted(self) -> defaultdict[str, List[str]]:
         """Get Inverted Transitions of the Kripke Structure.
 
         Returns:
-            a dict, Key is the Target State Name, Value is a list of Source State Names
+            a defaultdict, Key is the Target State Name, Value is a list of Source State Names
 
         """
-        return dict(self.trans_inverted)
+        return self._trans_inverted
 
     def remove_trans(self, trans: Dict[str, List[str]]) -> None:
         """Remove multiple Transitions from the Kripke Structure.
@@ -272,15 +324,25 @@ class KripkeStruct:
         """
         for state, next_states in trans.items():
             for next_state in next_states:
-                if state in self.states and next_state in self.trans[state]:
-                    self.trans[state].remove(next_state)
-                    self.trans_inverted[next_state].remove(state)
+                if state in self._states and next_state in self._trans[state]:
+                    self._trans[state].remove(next_state)
+                    self._trans_inverted[next_state].remove(state)
+
+    def reverse_all_trans(self) -> None:
+        """Reverse all Transitions in the Kripke Structure.
+
+        This funciton is destructive!!!
+        It will NOT create a new copy of the current Kripke Structure,
+        but will directly modify the current Kripke Structure.
+
+        """
+        self._trans, self._trans_inverted = self._trans_inverted, self._trans
 
     def get_SCCs(self) -> List[Set[str]]:
         """Get all Strongly Connected Components (SCCs) in the Kripke Structure.
 
         Returns:
-            a list of sets, where each set is a SCC
+            a list of sets, where each set contains the State Names in a SCC
 
         """
         # we use Kosaraju's Algorithm to find SCCs
@@ -290,27 +352,27 @@ class KripkeStruct:
 
         def DFS(state, visited, order_stack):
             visited.add(state)
-            successors = self.trans[state]
+            successors = self._trans[state]
             for successor in successors:
                 if successor not in visited:
                     DFS(successor, visited, order_stack)
             # add to order_stack when exiting DFS
             order_stack.append(state)
 
-        for state in self.states:
+        for state in self._states:
             if state not in visited:
                 DFS(state, visited, order_stack)
 
         # second, we create the reversed graph of the Kripke Structure self
         # since we need to modify the reversed graph, we create a deepcopy of self
         reversed_graph = deepcopy(self)
-        reversed_graph.trans, reversed_graph.trans_inverted = reversed_graph.trans_inverted, reversed_graph.trans
+        reversed_graph.reverse_all_trans()
 
         # third we run multiple rounds of DFS on the reversed graph until all states are visited
         # when we finish a round of DFS, we get a SCC
         # then we add the SCC to the set, and remove all states in the SCC from the reversed graph
         SCCs = set()
-        while reversed_graph.states:
+        while reversed_graph.get_states():
             # we run DFS on the reversed graph, following the order of the "order_stack"
             tmp_stack = [order_stack.pop()]
             visited = set()
@@ -323,7 +385,7 @@ class KripkeStruct:
                     order_stack.remove(current_state)
 
                 # add un-visited successors to the stack
-                successors = reversed_graph.trans[current_state]
+                successors = reversed_graph.get_trans()[current_state]
                 for successor in successors:
                     if successor not in visited:
                         tmp_stack.append(successor)

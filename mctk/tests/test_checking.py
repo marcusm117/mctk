@@ -13,7 +13,7 @@ from mctk import SAT_atom, NOT, AND, OR, IMPLIES, IFF, EX, AX, EU, EF, AG, EG, A
 
 
 ks_json = {
-    "Atoms": ("a", "b", "c", "d"),
+    "Atoms": ["a", "b", "c", "d"],
     "States": {
         "s1": 0b1000,  # s1 has labels "a"
         "s2": 0b1100,  # s2 has labels "a", "b"
@@ -56,7 +56,7 @@ def test_ESMC_SAT_atom():
     assert str(error_info.value) == "Can't check on an atom that's not in the Kripke Structure"
 
     sat_states = SAT_atom(ks, "True")
-    assert sat_states == set(ks.states.keys())
+    assert sat_states == set(ks.get_states().keys())
 
     sat_states = SAT_atom(ks, "False")
     assert sat_states == set()
@@ -64,16 +64,16 @@ def test_ESMC_SAT_atom():
 
 def test_ESMC_NOT():
     sat_states = NOT(ks, SAT_atom(ks, "a"))
-    assert sat_states == set(ks.states.keys()) - {"s1", "s2"}
+    assert sat_states == set(ks.get_states().keys()) - {"s1", "s2"}
 
     sat_states = NOT(ks, SAT_atom(ks, "b"))
-    assert sat_states == set(ks.states.keys()) - {"s2", "s3", "s4", "s5"}
+    assert sat_states == set(ks.get_states().keys()) - {"s2", "s3", "s4", "s5"}
 
     sat_states = NOT(ks, SAT_atom(ks, "True"))
     assert sat_states == set()
 
     sat_states = NOT(ks, SAT_atom(ks, "False"))
-    assert sat_states == set(ks.states.keys())
+    assert sat_states == set(ks.get_states().keys())
 
 
 def test_ESMC_AND():
@@ -188,8 +188,8 @@ def test_ESMC_EG():
     # change s5's label to {"b", "d"}
     # change s6's label to {"c", "d"}
     tmp_ks = deepcopy(ks)
-    tmp_ks.states["s5"] = 0b0101
-    tmp_ks.states["s6"] = 0b0011
+    tmp_ks.set_label_of_state("s5", 0b0101)
+    tmp_ks.set_label_of_state("s6", 0b0011)
 
     sat_states = EG(tmp_ks, SAT_atom(tmp_ks, "a"))
     assert sat_states == set()
@@ -211,7 +211,7 @@ def test_ESMC_EG():
 def test_ESMC_AF():
     # change s7 to "", which is empty set
     tmp_ks = deepcopy(ks)
-    tmp_ks.states["s7"] = 0b0000
+    tmp_ks.set_label_of_state("s7", 0b0000)
 
     sat_states = AF(tmp_ks, SAT_atom(tmp_ks, "a"))
     assert sat_states == {"s1", "s2"}

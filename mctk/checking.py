@@ -73,21 +73,21 @@ def SAT_atom(ks: KripkeStruct, atomic_property: str) -> Set[str]:
 
     """
     sat_states = set()
-    state_names = ks.get_states().keys()
+    state_names = ks.get_state_names()
 
     if atomic_property == "True":
-        return set(state_names)
+        return state_names
     if atomic_property == "False":
         return set()
     if atomic_property not in ks.get_atoms():
         raise KripkeStructError("Can't check on an atom that's not in the Kripke Structure")
 
     for state in state_names:
-        # get the set of labels for the state
-        label_set = ks.get_label_of_state(state)
+        # get the Label for the State Name, which is a set of atoms
+        label = ks.get_label_of_state(state)
 
-        # if the atomic property is in the Label Set, then this state satisfies the atomic property
-        if atomic_property in label_set:
+        # if the atomic property is in the Label, then this state satisfies the atomic property
+        if atomic_property in label:
             sat_states.add(state)
 
     return sat_states
@@ -107,7 +107,7 @@ def NOT(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
 
     """
     # complement of the set
-    return set(ks.get_states().keys()) - property1
+    return ks.get_state_names() - property1
 
 
 def AND(property1: Set[str], property2: Set[str]) -> Set[str]:
@@ -254,7 +254,7 @@ def EU(ks: KripkeStruct, property1: Set[str], property2: Set[str]) -> Set[str]:
         # get the predecessors of all states in "sat_states"
         predecessors = set()
         for state in sat_states:
-            predecessors = predecessors | set(ks.get_trans_inverted()[state])
+            predecessors = predecessors | ks.get_trans_inverted()[state]
 
         # add states that can reach "sat_states" in 1 step, and also satisfy property1
         sat_states = sat_states | (property1 & predecessors)
@@ -282,7 +282,7 @@ def EF(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
 
     """
     # EF p = E true U p
-    return EU(ks, set(ks.get_states().keys()), property1)
+    return EU(ks, ks.get_state_names(), property1)
 
 
 def AG(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
@@ -347,7 +347,7 @@ def EG(ks: KripkeStruct, property1: Set[str]) -> Set[str]:
         # get the predecessors of all states in "sat_states"
         predecessors = set()
         for state in sat_states:
-            predecessors = predecessors | set(sub_graph.get_trans_inverted()[state])
+            predecessors = predecessors | sub_graph.get_trans_inverted()[state]
 
         # add states that can reach "sat_states" in 1 step
         sat_states = sat_states | predecessors

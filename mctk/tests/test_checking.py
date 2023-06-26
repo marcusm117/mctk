@@ -15,13 +15,13 @@ from mctk import SAT_atom, NOT, AND, OR, IMPLIES, IFF, EX, AX, EU, EF, AG, EG, A
 ks_json = {
     "Atoms": ["a", "b", "c", "d"],
     "States": {
-        "s1": 0b1000,  # s1 has labels "a"
-        "s2": 0b1100,  # s2 has labels "a", "b"
-        "s3": 0b0110,  # s3 has labels "b", "c"
-        "s4": 0b0111,  # s4 has labels "b", "c", "d"
-        "s5": 0b0100,  # s5 has label "b"
-        "s6": 0b0010,  # s6 has label "c"
-        "s7": 0b0001,  # s7 has label "d"
+        "s1": ["a"],
+        "s2": ["a", "b"],
+        "s3": ["b", "c"],
+        "s4": ["b", "c", "d"],
+        "s5": ["b"],
+        "s6": ["c"],
+        "s7": ["d"],
     },
     "Starts": ["s1"],
     "Trans": {
@@ -188,8 +188,8 @@ def test_ESMC_EG():
     # change s5's label to {"b", "d"}
     # change s6's label to {"c", "d"}
     tmp_ks = deepcopy(ks)
-    tmp_ks.set_label_of_state("s5", 0b0101)
-    tmp_ks.set_label_of_state("s6", 0b0011)
+    tmp_ks.set_label_of_state("s5", {"b", "d"})
+    tmp_ks.set_label_of_state("s6", {"c", "d"})
 
     sat_states = EG(tmp_ks, SAT_atom(tmp_ks, "a"))
     assert sat_states == set()
@@ -211,7 +211,7 @@ def test_ESMC_EG():
 def test_ESMC_AF():
     # change s7 to "", which is empty set
     tmp_ks = deepcopy(ks)
-    tmp_ks.set_label_of_state("s7", 0b0000)
+    tmp_ks.set_label_of_state("s7", set())
 
     sat_states = AF(tmp_ks, SAT_atom(tmp_ks, "a"))
     assert sat_states == {"s1", "s2"}
@@ -265,8 +265,8 @@ def test_ESMC_examples():
     # a State Name is represented by a string, it must be unique
     # a State Label is represented by a binary number, it must be unique
     # for example, 0b10 means the state has the Atoms "p" but not "q"
-    ks.add_state("s0", 0b10)
-    ks.add_state("s1", 0b01)
+    ks.add_state("s0", ["p"])
+    ks.add_state("s1", ["q"])
 
     # set the Start States of the Kripke Structure
     # there can be multiple Start States

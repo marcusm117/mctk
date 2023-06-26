@@ -65,10 +65,9 @@ ks.set_atoms(["p", "q"])
 
 # add 2 states to the Kripke Structure
 # a State Name is represented by a string, it must be unique
-# a State Label is represented by a binary number, it must be unique
-# for example, 0b10 means the state has the Atoms "p" but not "q"
-ks.add_state("s0", 0b10)
-ks.add_state("s1", 0b01)
+# a State Label is represented by a list of Atoms, it must be unique
+ks.add_state("s0", ["p"])
+ks.add_state("s1", ["q"])
 
 # set the Start States of the Kripke Structure
 # there can be multiple Start States
@@ -127,33 +126,33 @@ assert sat_states == set()
 ks_json = {
    "Atoms": ["a", "b", "c", "d"],
    "States": {
-      "s1": 0b1000,  # s1 has labels "a"
-      "s2": 0b1100,  # s2 has labels "a", "b"
-      "s3": 0b0110,  # s3 has labels "b", "c"
-      "s4": 0b0111,  # s4 has labels "b", "c", "d"
-      "s5": 0b0100,  # s5 has label "b"
-      "s6": 0b0010,  # s6 has label "c"
-      "s7": 0b0001,  # s7 has label "d"
-      },
-      "Starts": ["s1"],
-      "Trans": {
-         's1': ['s2'],
-         's2': ['s3', 's4'],
-         's3': ['s4'],
-         's4': ['s7'],
-         's5': ['s6'],
-         's6': ['s7', 's5'],
-         's7': ['s5'],
-         },
+      "s1": ["a"],
+      "s2": ["a", "b"],
+      "s3": ["b", "c"],
+      "s4": ["b", "c", "d"],
+      "s5": ["b"],
+      "s6": ["c"],
+      "s7": ["d"],
+   },
+   "Starts": ["s1"],
+   "Trans": {
+      's1': ['s2'],
+      's2': ['s3', 's4'],
+      's3': ['s4'],
+      's4': ['s7'],
+      's5': ['s6'],
+      's6': ['s7', 's5'],
+      's7': ['s5'],
+   },
 }
 ks = KripkeStruct(ks_json)
 
 # check if the Kripke Structure satisfies the CTL formula: EX a
 sat_states = EX(ks, SAT_atom(ks, "a"))
 
-# the result should be {"s2"}
-# since the start state "s1" is not in sat_states, ks doesn't satisfy the CTL formula
-assert sat_states == {"s2"}
+# the result should be {"s1"}
+# since the start state "s1" is in sat_states, ks satisfies the CTL formula
+assert sat_states == {"s1"}
 
 # check if the Kripke Structure satisfies the CTL formula: E a U b
 sat_states = EU(ks, SAT_atom(ks, "a"), SAT_atom(ks, "b"))
@@ -163,7 +162,7 @@ sat_states = EU(ks, SAT_atom(ks, "a"), SAT_atom(ks, "b"))
 assert sat_states == {'s1', 's2', 's3', 's4', 's5'}
 
 # check if the Kripke Structure satisfies the CTL formula: EG a
-sat_states = EG(tmp_ks, SAT_atom(tmp_ks, "a"))
+sat_states = EG(ks, SAT_atom(ks, "a"))
 
 # the result should be set()
 # since the start state "s1" is not in sat_states, ks doesn't satisfy the CTL formula

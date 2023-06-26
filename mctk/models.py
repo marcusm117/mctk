@@ -1,6 +1,6 @@
 # Authors: marcusm117
 # License: Apache 2.0
-"""This Module currently contains a class KripkeStruct, which is a graph implementation of Kripke Structures.
+"""This Module contains a class KripkeStruct, which is a graph implementation of Kripke Structures.
 
 We plan to support other Transition Systems as well in the future.
 
@@ -12,22 +12,8 @@ from collections import defaultdict, UserDict
 from copy import deepcopy
 
 
-class _UniqueValueDict(UserDict):
-    def __setitem__(self, key, value):
-        # if the value is already assigned to the key, do nothing
-        if (key in self) and (self.__getitem__(key) == value):
-            return
-
-        # if the value is already assigned to a different key, raise an error
-        # doesn't matter if the key exists or not
-        if value in self.values():
-            raise ValueError("Can't assign an existing value to a differnt key")
-
-        super().__setitem__(key, value)
-
-
 class KripkeStructError(Exception):
-    """Exceptions raised by methods in class KripkeStruct."""
+    """Exceptions raised by methods related to class KripkeStruct."""
 
 
 class KripkeStruct:
@@ -39,6 +25,7 @@ class KripkeStruct:
 
     Attributes:
         _atoms (tuple): Atoms, can only be reset before any state is created
+        _atoms_set (set): Atoms, a duplicate of "_atoms", only for efficiency
         _states (_UniqueValueDict): States, Key is the state name, Value is the state label
         _starts (set): Start States
         _trans (defaultdict): Transitions, Key is the source state, Value is a set of target states
@@ -48,7 +35,8 @@ class KripkeStruct:
 
     def __init__(self, model_json=None):
         self._atoms = ()
-        self._states = _UniqueValueDict()
+        self._atoms_set = set()
+        self._states = self._KripkeStateDict()
         self._starts = set()
         self._trans = defaultdict(set)
         self._trans_inverted = defaultdict(set)
@@ -58,6 +46,31 @@ class KripkeStruct:
             self.add_states(model_json["States"])
             self.set_starts(model_json["Starts"])
             self.add_trans(model_json["Trans"])
+
+    class _KripkeStateDict(UserDict):
+        def __init__(self, atoms_num: int = 0):
+            self.atoms_num = atoms_num
+            super().__init__()
+
+        def __setitem__(self, key, value):
+            # if the value is already assigned to the key, do nothing
+            if (key in self) and (self.__getitem__(key) == value):
+                return
+
+            # if the value is NOT an int, raise an error
+            if not isinstance(value, int):
+                raise KripkeStructError("The a State Label should be an int, when assigning with []")
+
+            # if the value exceeds 2^n, where n is the number of atoms, raise an error
+            if value >= 2**self.atoms_num:
+                raise KripkeStructError("The value should be less than 2^n, where n is the number of atoms")
+
+            # if the value is already assigned to a different key, raise an error
+            # no matter if the key exists or not
+            if value in self.values():
+                raise KripkeStructError("Can't assign an existing State Label to a different State Name")
+
+            super().__setitem__(key, value)
 
     def __str__(self) -> str:
         return (
@@ -85,6 +98,8 @@ class KripkeStruct:
         if self._states:
             raise KripkeStructError("Can't reset Atoms after States are Created")
         self._atoms = tuple(atoms)
+        self._atoms_set = set(atoms)
+        self._states.atoms_num = len(atoms)
 
     def get_atoms(self) -> Tuple[str]:
         """Get Atoms of the Kripke Structure.
@@ -95,31 +110,60 @@ class KripkeStruct:
         """
         return self._atoms
 
-    def add_state(self, state: str, label: int) -> None:
+    def add_state(self, state: str, label: List[str]) -> None:
         """Add a State to the Kripke Structure.
 
-        The State Label is represented by an integer.
-        Its binary form of which indicates which Atoms are ture for this State.
-        For example, if the Atoms are ("p", "q", "r"),
-        and a State Label is 6 whose binary form is 110,
-        then the State is lablled as {"p", "q"}.
+        The State Label is a list of strings, where each string is an Atom.
+        For example, if the atom is ("a", "b", "c"),
+        then the label can be ["a"], ["a", "b", "c"], or [].
 
         Args:
             state: a string representing the State Name
-            label: an int representing the State Label, you are encouraged to input in the binary from
+            label: a list of strings representing the State Label
 
         Raises:
-            KripkeStructError: if a State Name or a State Label exists, can't add again
+            KripkeStructError: if the State Name or State Label exists, can't add again
+            KrinkeStructError: if the State Label contains a Non-Eixsting Atom, can't add it
+
+        Note:
+            The parameter "label" should be a list to stay compatible with the JSON format.
+            However, internally, the field "_states" is stored as a dict[str, int] for efficiency.
 
         """
-        # if the state or the label exists, can't add again
+        # if the state exists, can't add again
         if state in self._states:
             raise KripkeStructError("Can't add an Existing State Name again")
-        if label in self._states.values():
-            raise KripkeStructError("Can't add an Existing State Label again")
-        self._states[state] = label
 
-    def add_states(self, states: Dict[str, int]) -> None:
+        # convert the label to a set, for efficiency,
+        # since we'll check if each atom in "self._atoms" is in "label" later
+        label_set = set(label)
+
+        # if the State Label contains a Non-Eixsting Atom, can't add it
+        for atom in label_set:
+            if atom not in self._atoms_set:
+                raise KripkeStructError("Can't add a State Label with a Non-Existing Atom")
+
+        # convert the label to its binary representation, to save memory
+        # for example, if the atoms are ("a", "b", "c", "d"), and the label is ["a", "c"],
+        # then the binary representation is 0b1010, which is the int 10 in decimal
+        label_binary = 0b0
+        for atom in self._atoms:
+            # if an Atom is in "label", set the corresponding bit to 1
+            if atom in label_set:
+                label_binary |= 0b1
+            # left shift by 1 bit
+            label_binary <<= 1
+
+        # correct the extra left shift
+        label_binary >>= 1
+
+        # if the state label exists, can't add again
+        if label_binary in self._states.values():
+            raise KripkeStructError("Can't add an Existing State Label again")
+
+        self._states[state] = label_binary
+
+    def add_states(self, states: Dict[str, List[str]]) -> None:
         """Add multiple States to the Kripke Structure.
 
         Args:
@@ -138,6 +182,10 @@ class KripkeStruct:
         Returns:
             a dict, Key is the State Name, Value is the State Label
 
+        Note:
+            The State Label is store in the binary representation,
+            instead of the list of strings.
+
         """
         return dict(self._states)
 
@@ -150,31 +198,51 @@ class KripkeStruct:
         """
         return set(self._states.keys())
 
-    def set_label_of_state(self, state: str, label: int) -> None:
+    def set_label_of_state(self, state: str, label_set: Set[str]) -> None:
         """Given an existing State Name, (re)set the State Label.
 
         Args:
             state: a string representing the State Name
-            label: an int representing the State Label, you are encouraged to input in the binary from
+            label_set: a set of strings representing the State Label
 
         Raises:
             KripkeStructError: if the State Name doesn't exist, can't (re)set the State Label
             KripkeStructError: if the Label has been assigned to a differnt State Name, can't assign it
+
+        Note:
+            The parameter "label_set" should be a set, NOT a list, for efficiency.
 
         """
         # if the State Name doesn't exist, can't set the Label of it
         if state not in self._states:
             raise KripkeStructError("Can't set the Label of a Non-Existing State")
 
+        # if the State Label contains a Non-Eixsting Atom, can't set it
+        for atom in label_set:
+            if atom not in self._atoms_set:
+                raise KripkeStructError("Can't set a State Label with a Non-Existing Atom")
+
+        # convert the label to its binary representation
+        label_binary = 0b0
+        for atom in self._atoms:
+            # if an Atom is in "label", set the corresponding bit to 1
+            if atom in label_set:
+                label_binary |= 0b1
+            # left shift by 1 bit
+            label_binary <<= 1
+
+        # correct the extra left shift
+        label_binary >>= 1
+
         # if the Label is already assigned to the State Name, do nothing
-        if self._states[state] == label:
+        if self._states[state] == label_binary:
             return
 
         # if the Label is assigned to a differnt State Name, can't assign it
-        if label in self._states.values():
+        if label_binary in self._states.values():
             raise KripkeStructError("Can't assign an Existing State Label to a Different State Name")
 
-        self._states[state] = label
+        self._states[state] = label_binary
 
     def get_label_of_state(self, state: str) -> Set[str]:
         """Given a State Name, get the corresponding State Label.

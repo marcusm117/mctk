@@ -1,5 +1,4 @@
-.. Model Checking Toolkit (MCTK) documentation master file, created by
-   sphinx-quickstart on Fri May 12 13:44:11 2023.
+.. Model Checking Toolkit (MCTK) documentation master file.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 

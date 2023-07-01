@@ -16,12 +16,12 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.python-version }}
+    runs-on: ${{matrix}}
 
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: [3.9, 3.11]
+        python-version: [3.9]
 
     steps:
     - uses: actions/checkout@v3

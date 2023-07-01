@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mctk.models &mdash; Model Checking Toolkit (MCTK) 0.1.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Model Checking Toolkit (MCTK)
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/getstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apis/mctk.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Model Checking Toolkit (MCTK)</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mctk.models</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mctk.models</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Authors: marcusm117</span>
+<span class="c1"># License: Apache 2.0</span>
+<span class="sd">&quot;&quot;&quot;This Module contains a class KripkeStruct, which is a graph implementation of Kripke Structures.</span>
+
+<span class="sd">We plan to support other Transition Systems as well in the future.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Standard Libraries</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">UserDict</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+
+
+<div class="viewcode-block" id="KripkeStructError"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStructError">[docs]</a><span class="k">class</span> <span class="nc">KripkeStructError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Exceptions raised by methods related to class KripkeStruct.&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="KripkeStruct"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct">[docs]</a><span class="k">class</span> <span class="nc">KripkeStruct</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class that implements a Kripke Structure for Model Checking.</span>
+
+<span class="sd">    An instance of thie class can be created from a JSON file or from scratch.</span>
+<span class="sd">    For more information about Kripke Structures, see:</span>
+<span class="sd">    https://en.wikipedia.org/wiki/Kripke_structure_(model_checking).</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        _atoms (tuple): Atoms, can only be reset before any state is created</span>
+<span class="sd">        _atoms_set (set): Atoms, a duplicate of &quot;_atoms&quot;, only for efficiency</span>
+<span class="sd">        _states (_UniqueValueDict): States, Key is the state name, Value is the state label</span>
+<span class="sd">        _starts (set): Start States</span>
+<span class="sd">        _trans (defaultdict): Transitions, Key is the source state, Value is a set of target states</span>
+<span class="sd">        _trans_inverted (defaultdict): Inverted Transitions, Key is the target state, Value is a set of source states</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_json</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span> <span class="o">=</span> <span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_KripkeStateDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trans_inverted</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model_json</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_atoms</span><span class="p">(</span><span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;Atoms&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_states</span><span class="p">(</span><span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;States&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_starts</span><span class="p">(</span><span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;Starts&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_trans</span><span class="p">(</span><span class="n">model_json</span><span class="p">[</span><span class="s2">&quot;Trans&quot;</span><span class="p">])</span>
+
+    <span class="k">class</span> <span class="nc">_KripkeStateDict</span><span class="p">(</span><span class="n">UserDict</span><span class="p">):</span>
+        <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms_num</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">atoms_num</span> <span class="o">=</span> <span class="n">atoms_num</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+            <span class="c1"># if the value is already assigned to the key, do nothing</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="o">==</span> <span class="n">value</span><span class="p">):</span>
+                <span class="k">return</span>
+
+            <span class="c1"># if the value is NOT an int, raise an error</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;The a State Label should be an int, when assigning with []&quot;</span><span class="p">)</span>
+
+            <span class="c1"># if the value exceeds 2^n, where n is the number of atoms, raise an error</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">atoms_num</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;The value should be less than 2^n, where n is the number of atoms&quot;</span><span class="p">)</span>
+
+            <span class="c1"># if the value is already assigned to a different key, raise an error</span>
+            <span class="c1"># no matter if the key exists or not</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t assign an existing State Label to a different State Name&quot;</span><span class="p">)</span>
+
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Atoms: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;States: </span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">)</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Starts: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Trans: </span><span class="si">{</span><span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="KripkeStruct.set_atoms"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.set_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">set_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">atoms</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set Atoms of the Kripke Structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            atoms: a list of strings representing the Atoms</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KripkeStructError: if any state exists, can&#39;t reset atoms</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The parameter &quot;atoms&quot; should be a list to stay compatible with the JSON format.</span>
+<span class="sd">            However, internally, the field &quot;_atoms&quot; is stored as a tuple for efficiency.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if any state exists, can&#39;t reset atoms</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t reset Atoms after States are Created&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="o">.</span><span class="n">atoms_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">atoms</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.get_atoms"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.get_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">get_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Atoms of the Kripke Structure.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a tuple of strings representing the Atoms</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.add_state"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.add_state">[docs]</a>    <span class="k">def</span> <span class="nf">add_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a State to the Kripke Structure.</span>
+
+<span class="sd">        The State Label is a list of strings, where each string is an Atom.</span>
+<span class="sd">        For example, if the atom is (&quot;a&quot;, &quot;b&quot;, &quot;c&quot;),</span>
+<span class="sd">        then the label can be [&quot;a&quot;], [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;], or [].</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state: a string representing the State Name</span>
+<span class="sd">            label: a list of strings representing the State Label</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KripkeStructError: if the State Name or State Label exists, can&#39;t add again</span>
+<span class="sd">            KrinkeStructError: if the State Label contains a Non-Eixsting Atom, can&#39;t add it</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The parameter &quot;label&quot; should be a list to stay compatible with the JSON format.</span>
+<span class="sd">            However, internally, the field &quot;_states&quot; is stored as a dict[str, int] for efficiency.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if the state exists, can&#39;t add again</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t add an Existing State Name again&quot;</span><span class="p">)</span>
+
+        <span class="c1"># convert the label to a set, for efficiency,</span>
+        <span class="c1"># since we&#39;ll check if each atom in &quot;self._atoms&quot; is in &quot;label&quot; later</span>
+        <span class="n">label_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+
+        <span class="c1"># if the State Label contains a Non-Eixsting Atom, can&#39;t add it</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">label_set</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms_set</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t add a State Label with a Non-Existing Atom&quot;</span><span class="p">)</span>
+
+        <span class="c1"># convert the label to its binary representation, to save memory</span>
+        <span class="c1"># for example, if the atoms are (&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;), and the label is [&quot;a&quot;, &quot;c&quot;],</span>
+        <span class="c1"># then the binary representation is 0b1010, which is the int 10 in decimal</span>
+        <span class="n">label_binary</span> <span class="o">=</span> <span class="mb">0b0</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">:</span>
+            <span class="c1"># if an Atom is in &quot;label&quot;, set the corresponding bit to 1</span>
+            <span class="k">if</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">label_set</span><span class="p">:</span>
+                <span class="n">label_binary</span> <span class="o">|=</span> <span class="mb">0b1</span>
+            <span class="c1"># left shift by 1 bit</span>
+            <span class="n">label_binary</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span>
+
+        <span class="c1"># correct the extra left shift</span>
+        <span class="n">label_binary</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span>
+
+        <span class="c1"># if the state label exists, can&#39;t add again</span>
+        <span class="k">if</span> <span class="n">label_binary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t add an Existing State Label again&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_binary</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.add_states"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.add_states">[docs]</a>    <span class="k">def</span> <span class="nf">add_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add multiple States to the Kripke Structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            states: a dict, Key is the State Name, Value is the State Label</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KripkeStructError: if a State Name or a State Label exists, can&#39;t add again</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">states</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.get_states"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.get_states">[docs]</a>    <span class="k">def</span> <span class="nf">get_states</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get States of the Kripke Structure.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a dict, Key is the State Name, Value is the State Label</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The State Label is store in the binary representation,</span>
+<span class="sd">            instead of the list of strings.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.get_state_names"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.get_state_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_state_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get just State Names of the Kripke Structure.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a set of strings representing the State Names</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.set_label_of_state"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.set_label_of_state">[docs]</a>    <span class="k">def</span> <span class="nf">set_label_of_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">label_set</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given an existing State Name, (re)set the State Label.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state: a string representing the State Name</span>
+<span class="sd">            label_set: a set of strings representing the State Label</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KripkeStructError: if the State Name doesn&#39;t exist, can&#39;t (re)set the State Label</span>
+<span class="sd">            KripkeStructError: if the Label has been assigned to a differnt State Name, can&#39;t assign it</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The parameter &quot;label_set&quot; should be a set, NOT a list, for efficiency.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if the State Name doesn&#39;t exist, can&#39;t set the Label of it</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t set the Label of a Non-Existing State&quot;</span><span class="p">)</span>
+
+        <span class="c1"># if the State Label contains a Non-Eixsting Atom, can&#39;t set it</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">label_set</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">atom</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms_set</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t set a State Label with a Non-Existing Atom&quot;</span><span class="p">)</span>
+
+        <span class="c1"># convert the label to its binary representation</span>
+        <span class="n">label_binary</span> <span class="o">=</span> <span class="mb">0b0</span>
+        <span class="k">for</span> <span class="n">atom</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">:</span>
+            <span class="c1"># if an Atom is in &quot;label&quot;, set the corresponding bit to 1</span>
+            <span class="k">if</span> <span class="n">atom</span> <span class="ow">in</span> <span class="n">label_set</span><span class="p">:</span>
+                <span class="n">label_binary</span> <span class="o">|=</span> <span class="mb">0b1</span>
+            <span class="c1"># left shift by 1 bit</span>
+            <span class="n">label_binary</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span>
+
+        <span class="c1"># correct the extra left shift</span>
+        <span class="n">label_binary</span> <span class="o">&gt;&gt;=</span> <span class="mi">1</span>
+
+        <span class="c1"># if the Label is already assigned to the State Name, do nothing</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">==</span> <span class="n">label_binary</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="c1"># if the Label is assigned to a differnt State Name, can&#39;t assign it</span>
+        <span class="k">if</span> <span class="n">label_binary</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t assign an Existing State Label to a Different State Name&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span> <span class="o">=</span> <span class="n">label_binary</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.get_label_of_state"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.get_label_of_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_label_of_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Given a State Name, get the corresponding State Label.</span>
+
+<span class="sd">        For example, if atoms is (&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;),</span>
+<span class="sd">        the State Name is &quot;s1&quot;, and the State Label is 0b1010,</span>
+<span class="sd">        then get_label_of_state(&quot;s1&quot;) will return the set {&quot;a&quot;, &quot;c&quot;}.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state: a string representing the State Name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a set of strings representing the State Label, instead of the binary form</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KripkeStructError: if the State Name doesn&#39;t exist, can&#39;t get the Label of it</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if the State Name doesn&#39;t exist, can&#39;t get the Label of it</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t get the Label of a Non-Existing State&quot;</span><span class="p">)</span>
+
+        <span class="c1"># get the binary form of the Label, then convert it to a set of atoms</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">)</span>
+        <span class="n">label_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="c1"># traverse the binary form of the Label</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+            <span class="c1"># if the i-th bit is 1, then the (length - 1 - i)-th atom is in the set</span>
+            <span class="k">if</span> <span class="n">label</span> <span class="o">&amp;</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">i</span><span class="p">:</span>
+                <span class="n">label_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">[</span><span class="n">length</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">i</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">label_set</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.remove_state"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.remove_state">[docs]</a>    <span class="k">def</span> <span class="nf">remove_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove a State from the Kripke Structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state: a string representing the State Name</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KripkeStructError: if the State Name doesn&#39;t exist, can&#39;t remove it</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># if the State Name doesn&#39;t exist, can&#39;t remove it</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t remove a Non-Existing State&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># removing a state will remove all related transitions</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="p">:</span>
+            <span class="n">next_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">next_state</span> <span class="ow">in</span> <span class="n">next_states</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trans_inverted</span><span class="p">[</span><span class="n">next_state</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans_inverted</span><span class="p">:</span>
+            <span class="n">prev_states</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans_inverted</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">prev_state</span> <span class="ow">in</span> <span class="n">prev_states</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="p">[</span><span class="n">prev_state</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.remove_states"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.remove_states">[docs]</a>    <span class="k">def</span> <span class="nf">remove_states</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">states</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove multiple States from the Kripke Structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            states: a list of strings representing the State Names</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">states</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">remove_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.set_starts"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.set_starts">[docs]</a>    <span class="k">def</span> <span class="nf">set_starts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">starts</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set Start States of the Kripke Structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            starts: a set of strings representing the Start States</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KripkeStructError: if a state doesn&#39;t exist, can&#39;t set it as a Start State</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The parameter &quot;starts&quot; should be a list to stay compatible with the JSON format.</span>
+<span class="sd">            However, internally, the field &quot;_starts&quot; is stored as a set for efficiency.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">start</span> <span class="ow">in</span> <span class="n">starts</span><span class="p">:</span>
+            <span class="c1"># if a state doesn&#39;t exist, can&#39;t set it as a Start State</span>
+            <span class="k">if</span> <span class="n">start</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t set a Non-Existing State as Start State&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">starts</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.get_starts"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.get_starts">[docs]</a>    <span class="k">def</span> <span class="nf">get_starts</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Start States of the Kripke Structure.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a set of strings representing the Start States</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.add_trans"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.add_trans">[docs]</a>    <span class="k">def</span> <span class="nf">add_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trans</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add multiple Transitions to the Kripke Structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            trans: a dict, Key is the Source State Name, Value is a list of Target State Names</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KripkeStructError: if Source or Target State doesn&#39;t exist, can&#39;t add transition</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The parameter &quot;trans&quot; should be a dict whose value is a list, to stay compatible with the JSON format.</span>
+<span class="sd">            However, internally, the field &quot;_trans&quot; is stored as a dict whose value is a set for efficiency.</span>
+<span class="sd">            For more information about list v.s. set, see:</span>
+<span class="sd">            https://stackoverflow.com/questions/2831212/python-sets-vs-lists</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">next_states</span> <span class="ow">in</span> <span class="n">trans</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="c1"># if source state doesn&#39;t exist, can&#39;t add transition</span>
+            <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t add Transition from a Non-Existing Source State&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">next_state</span> <span class="ow">in</span> <span class="n">next_states</span><span class="p">:</span>
+                <span class="c1"># if target state doesn&#39;t exist, can&#39;t add transition</span>
+                <span class="k">if</span> <span class="n">next_state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t add Transition to a Non-Existing Target State&quot;</span><span class="p">)</span>
+                <span class="c1"># adding a Transition will also update the Inverted Transitions,</span>
+                <span class="c1"># which will be used to remove related Transitions when revmoing a State</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trans_inverted</span><span class="p">[</span><span class="n">next_state</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.get_trans"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.get_trans">[docs]</a>    <span class="k">def</span> <span class="nf">get_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">defaultdict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Transitions of the Kripke Structure.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a defaultdict, Key is the Source State Name, Value is a set of Target State Names</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.get_trans_inverted"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.get_trans_inverted">[docs]</a>    <span class="k">def</span> <span class="nf">get_trans_inverted</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">defaultdict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get Inverted Transitions of the Kripke Structure.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a defaultdict, Key is the Target State Name, Value is a set of Source State Names</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans_inverted</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.remove_trans"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.remove_trans">[docs]</a>    <span class="k">def</span> <span class="nf">remove_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trans</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove multiple Transitions from the Kripke Structure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            trans: a dict, Key is the Source State Name, Value is a list of Target State Names</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            KripkeStructError: if a Transition doesn&#39;t exist, can&#39;t remove it</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">            The parameter &quot;trans&quot; should be a dict whose value is a list for efficiency,</span>
+<span class="sd">            since it will only be iterated once.</span>
+<span class="sd">            However, internally, the field &quot;_trans&quot; is stored as a dict whose value is a set for efficiency.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">state</span><span class="p">,</span> <span class="n">next_states</span> <span class="ow">in</span> <span class="n">trans</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">next_state</span> <span class="ow">in</span> <span class="n">next_states</span><span class="p">:</span>
+                <span class="c1"># if a Transition doesn&#39;t exist, can&#39;t remove it</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">next_state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="p">[</span><span class="n">state</span><span class="p">]):</span>
+                    <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t remove a Non-Existing Transition&quot;</span><span class="p">)</span>
+                <span class="c1"># removing a Transition will also update the Inverted Transitions</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="p">[</span><span class="n">state</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_trans_inverted</span><span class="p">[</span><span class="n">next_state</span><span class="p">]</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">state</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.reverse_all_trans"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.reverse_all_trans">[docs]</a>    <span class="k">def</span> <span class="nf">reverse_all_trans</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reverse all Transitions in the Kripke Structure.</span>
+
+<span class="sd">        This funciton is destructive!!!</span>
+<span class="sd">        It will NOT create a new copy of the current Kripke Structure,</span>
+<span class="sd">        but will directly modify the current Kripke Structure.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans_inverted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans_inverted</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span></div>
+
+<div class="viewcode-block" id="KripkeStruct.get_SCCs"><a class="viewcode-back" href="../../apis/mctk.html#mctk.models.KripkeStruct.get_SCCs">[docs]</a>    <span class="k">def</span> <span class="nf">get_SCCs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all Strongly Connected Components (SCCs) in the Kripke Structure.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            a list of sets, where each set contains the State Names in a SCC</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># we use Kosaraju&#39;s Algorithm to find SCCs</span>
+        <span class="c1"># first, we run DFS on the original graph, store the order of finishing states in &quot;order_stack&quot;</span>
+        <span class="n">order_stack</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">def</span> <span class="nf">DFS</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">order_stack</span><span class="p">):</span>
+            <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+            <span class="n">successors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trans</span><span class="p">[</span><span class="n">state</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">successors</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">successor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                    <span class="n">DFS</span><span class="p">(</span><span class="n">successor</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">order_stack</span><span class="p">)</span>
+            <span class="c1"># add to order_stack when exiting DFS</span>
+            <span class="n">order_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                <span class="n">DFS</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">visited</span><span class="p">,</span> <span class="n">order_stack</span><span class="p">)</span>
+
+        <span class="c1"># second, we create the reversed graph of the Kripke Structure self</span>
+        <span class="c1"># since we need to modify the reversed graph, we create a deepcopy of self</span>
+        <span class="n">reversed_graph</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">reversed_graph</span><span class="o">.</span><span class="n">reverse_all_trans</span><span class="p">()</span>
+
+        <span class="c1"># third we run multiple rounds of DFS on the reversed graph until all states are visited</span>
+        <span class="c1"># when we finish a round of DFS, we get a SCC</span>
+        <span class="c1"># then we add the SCC to the set, and remove all states in the SCC from the reversed graph</span>
+        <span class="n">SCCs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">while</span> <span class="n">reversed_graph</span><span class="o">.</span><span class="n">get_states</span><span class="p">():</span>
+            <span class="c1"># we run DFS on the reversed graph, following the order of the &quot;order_stack&quot;</span>
+            <span class="n">tmp_stack</span> <span class="o">=</span> <span class="p">[</span><span class="n">order_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()]</span>
+            <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+            <span class="k">while</span> <span class="n">tmp_stack</span><span class="p">:</span>
+                <span class="n">current_state</span> <span class="o">=</span> <span class="n">tmp_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="n">visited</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>
+
+                <span class="c1"># remove the visited state from the order_stack</span>
+                <span class="k">if</span> <span class="n">current_state</span> <span class="ow">in</span> <span class="n">order_stack</span><span class="p">:</span>
+                    <span class="n">order_stack</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>
+
+                <span class="c1"># add un-visited successors to the stack</span>
+                <span class="n">successors</span> <span class="o">=</span> <span class="n">reversed_graph</span><span class="o">.</span><span class="n">get_trans</span><span class="p">()[</span><span class="n">current_state</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">successors</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">successor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
+                        <span class="n">tmp_stack</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
+
+            <span class="c1"># now all states in the set &quot;visited&quot; are in the same SCC</span>
+            <span class="c1"># so we add it to the list of SCCs, and remove all states in it from the reversed graph</span>
+            <span class="n">SCCs</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">frozenset</span><span class="p">(</span><span class="n">visited</span><span class="p">))</span>
+            <span class="n">reversed_graph</span><span class="o">.</span><span class="n">remove_states</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">visited</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">SCCs</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, marcusm117.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

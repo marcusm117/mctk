@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; Model Checking Toolkit (MCTK) 0.1.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Contributing" href="../tutorials/contributing.html" />
+    <link rel="prev" title="Getting Started" href="../tutorials/getstarted.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Model Checking Toolkit (MCTK)
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/getstarted.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-mctk.checking">mctk.checking module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.AF"><code class="docutils literal notranslate"><span class="pre">AF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.AG"><code class="docutils literal notranslate"><span class="pre">AG()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.AND"><code class="docutils literal notranslate"><span class="pre">AND()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.AU"><code class="docutils literal notranslate"><span class="pre">AU()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.AX"><code class="docutils literal notranslate"><span class="pre">AX()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.EF"><code class="docutils literal notranslate"><span class="pre">EF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.EG"><code class="docutils literal notranslate"><span class="pre">EG()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.EU"><code class="docutils literal notranslate"><span class="pre">EU()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.EX"><code class="docutils literal notranslate"><span class="pre">EX()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.IFF"><code class="docutils literal notranslate"><span class="pre">IFF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.IMPLIES"><code class="docutils literal notranslate"><span class="pre">IMPLIES()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.NOT"><code class="docutils literal notranslate"><span class="pre">NOT()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.OR"><code class="docutils literal notranslate"><span class="pre">OR()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.checking.SAT_atom"><code class="docutils literal notranslate"><span class="pre">SAT_atom()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-mctk.models">mctk.models module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.models.KripkeStruct"><code class="docutils literal notranslate"><span class="pre">KripkeStruct</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct._atoms"><code class="docutils literal notranslate"><span class="pre">KripkeStruct._atoms</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct._atoms_set"><code class="docutils literal notranslate"><span class="pre">KripkeStruct._atoms_set</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct._states"><code class="docutils literal notranslate"><span class="pre">KripkeStruct._states</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct._starts"><code class="docutils literal notranslate"><span class="pre">KripkeStruct._starts</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct._trans"><code class="docutils literal notranslate"><span class="pre">KripkeStruct._trans</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct._trans_inverted"><code class="docutils literal notranslate"><span class="pre">KripkeStruct._trans_inverted</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.add_state"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.add_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.add_states"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.add_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.add_trans"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.add_trans()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.get_SCCs"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.get_SCCs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.get_atoms"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.get_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.get_label_of_state"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.get_label_of_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.get_starts"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.get_starts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.get_state_names"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.get_state_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.get_states"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.get_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.get_trans"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.get_trans()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.get_trans_inverted"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.get_trans_inverted()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.remove_state"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.remove_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.remove_states"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.remove_states()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.remove_trans"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.remove_trans()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.reverse_all_trans"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.reverse_all_trans()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.set_atoms"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.set_atoms()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.set_label_of_state"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.set_label_of_state()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mctk.models.KripkeStruct.set_starts"><code class="docutils literal notranslate"><span class="pre">KripkeStruct.set_starts()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#mctk.models.KripkeStructError"><code class="docutils literal notranslate"><span class="pre">KripkeStructError</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Model Checking Toolkit (MCTK)</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/apis/mctk.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h1>
+<section id="module-mctk.checking">
+<span id="mctk-checking-module"></span><h2>mctk.checking module<a class="headerlink" href="#module-mctk.checking" title="Permalink to this heading"></a></h2>
+<p>This Module contains functions for Explicit-State Model Checking CTL properties on the class KripkeStruct.</p>
+<p>We plan to support Symbolic Model Checking and Bounded Model Checking in the future.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">mctk</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ks_json</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">... </span>    <span class="s2">&quot;Atoms&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="s2">&quot;States&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s2">&quot;s1&quot;</span><span class="p">:</span> <span class="mb">0b1000</span><span class="p">,</span>  <span class="c1"># s1 has labels &quot;a&quot;</span>
+<span class="gp">... </span>        <span class="s2">&quot;s2&quot;</span><span class="p">:</span> <span class="mb">0b1100</span><span class="p">,</span>  <span class="c1"># s2 has labels &quot;a&quot;, &quot;b&quot;</span>
+<span class="gp">... </span>        <span class="s2">&quot;s3&quot;</span><span class="p">:</span> <span class="mb">0b0110</span><span class="p">,</span>  <span class="c1"># s3 has labels &quot;b&quot;, &quot;c&quot;</span>
+<span class="gp">... </span>        <span class="s2">&quot;s4&quot;</span><span class="p">:</span> <span class="mb">0b0111</span><span class="p">,</span>  <span class="c1"># s4 has labels &quot;b&quot;, &quot;c&quot;, &quot;d&quot;</span>
+<span class="gp">... </span>        <span class="s2">&quot;s5&quot;</span><span class="p">:</span> <span class="mb">0b0100</span><span class="p">,</span>  <span class="c1"># s5 has label &quot;b&quot;</span>
+<span class="gp">... </span>        <span class="s2">&quot;s6&quot;</span><span class="p">:</span> <span class="mb">0b0010</span><span class="p">,</span>  <span class="c1"># s6 has label &quot;c&quot;</span>
+<span class="gp">... </span>        <span class="s2">&quot;s7&quot;</span><span class="p">:</span> <span class="mb">0b0001</span><span class="p">,</span>  <span class="c1"># s7 has label &quot;d&quot;</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span>    <span class="s2">&quot;Starts&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;s1&quot;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="s2">&quot;Trans&quot;</span><span class="p">:</span> <span class="p">{</span>
+<span class="gp">... </span>        <span class="s1">&#39;s1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s2&#39;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="s1">&#39;s2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;s4&#39;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="s1">&#39;s3&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s4&#39;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="s1">&#39;s4&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s7&#39;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="s1">&#39;s5&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s6&#39;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="s1">&#39;s6&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s7&#39;</span><span class="p">,</span> <span class="s1">&#39;s5&#39;</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="s1">&#39;s7&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s5&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">},</span>
+<span class="gp">... </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ks</span> <span class="o">=</span> <span class="n">KripkeStruct</span><span class="p">(</span><span class="n">ks_json</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sat_states</span> <span class="o">=</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sat_states</span><span class="p">)</span>
+<span class="go">{&#39;s1&#39;, &#39;s2&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sat_states</span> <span class="o">=</span> <span class="n">AND</span><span class="p">(</span><span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">),</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sat_states</span><span class="p">)</span>
+<span class="go">{&#39;s3&#39;, &#39;s4&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sat_states</span> <span class="o">=</span> <span class="n">EX</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sat_states</span><span class="p">)</span>
+<span class="go">{&#39;s2&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sat_states</span> <span class="o">=</span> <span class="n">EU</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sat_states</span><span class="p">)</span>
+<span class="go">{&#39;s1&#39;, &#39;s2&#39;, &#39;s3&#39;, &#39;s4&#39;, &#39;s5&#39;}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sat_states</span> <span class="o">=</span> <span class="n">EG</span><span class="p">(</span><span class="n">tmp_ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">tmp_ks</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sat_states</span><span class="p">)</span>
+<span class="go">set()</span>
+</pre></div>
+</div>
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.AF">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">AF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#AF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.AF" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the AF operator on a CTL property.</p>
+<p>Return a set of states where the CTL formula “AF property” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “AF property” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.AG">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">AG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#AG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.AG" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the AG operator on a CTL property.</p>
+<p>Return a set of states where the CTL formula “AG property” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “AG property” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.AND">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">AND</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#AND"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.AND" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the AND operator on two CTL properties.</p>
+<p>Return a set of states where the CTL formula “property1 AND property2” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property1</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+<li><p><strong>property2</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “property1 AND property2” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.AU">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">AU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#AU"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.AU" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the AU operator on two CTL properties.</p>
+<p>Return a set of states where the CTL formula “A property1 U property2” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property1</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+<li><p><strong>property2</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “A property1 U property2” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.AX">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">AX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#AX"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.AX" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the AX operator on a CTL property.</p>
+<p>Return a set of states where the CTL formula “AX property” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “AX property” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.EF">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">EF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#EF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.EF" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the EF operator on a CTL property.</p>
+<p>Return a set of states where the CTL formula “EF property” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “EF property” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.EG">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">EG</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#EG"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.EG" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the EG operator on a CTL property.</p>
+<p>Return a set of states where the CTL formula “EG property” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where “EG property” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.EU">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">EU</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#EU"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.EU" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the EU operator on two CTL properties.</p>
+<p>Return a set of states where the CTL formula “E property1 U property2” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property1</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+<li><p><strong>property2</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “E property1 U property2” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.EX">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">EX</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#EX"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.EX" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the EX operator on a CTL property.</p>
+<p>Return a set of states where the CTL formula “EX property” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “EX property” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.IFF">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">IFF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#IFF"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.IFF" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the IFF operator on two CTL properties.</p>
+<p>Return a set of states where the CTL formula “property1 IFF property2” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property1</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+<li><p><strong>property2</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “property1 IFF property2” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.IMPLIES">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">IMPLIES</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#IMPLIES"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.IMPLIES" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the IMPLIES operator on two CTL properties.</p>
+<p>Return a set of states where the CTL formula “property1 IMPLIES property2” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property1</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+<li><p><strong>property2</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “property1 IMPLIES property2” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.NOT">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">NOT</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#NOT"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.NOT" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the NOT operator on a CTL property.</p>
+<p>Return a set of states where the CTL formula “NOT property” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “NOT property” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.OR">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">OR</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">property1</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">property2</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#OR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.OR" title="Permalink to this definition"></a></dt>
+<dd><p>Implement the OR operator on two CTL properties.</p>
+<p>Return a set of states where the CTL formula “property1 OR property2” is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>property1</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+<li><p><strong>property2</strong> – a CTL property represented as a set of states that satisfy the property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the CTL formula “property1 OR property2” is satisfied</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="mctk.checking.SAT_atom">
+<span class="sig-prename descclassname"><span class="pre">mctk.checking.</span></span><span class="sig-name descname"><span class="pre">SAT_atom</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#mctk.models.KripkeStruct" title="mctk.models.KripkeStruct"><span class="pre">KripkeStruct</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">atomic_property</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/checking.html#SAT_atom"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.checking.SAT_atom" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate an atomic propositional property on a Kripke Structure.</p>
+<p>Return a set of states where the atomic propositional property is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ks</strong> – a Kripke Structure</p></li>
+<li><p><strong>atomic_property</strong> – an Atomic Propositional Property represented as a string</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of states where the Atomic Propositional Property is satisfied</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if the Atomic Property is not in the Kripke Structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-mctk.models">
+<span id="mctk-models-module"></span><h2>mctk.models module<a class="headerlink" href="#module-mctk.models" title="Permalink to this heading"></a></h2>
+<p>This Module contains a class KripkeStruct, which is a graph implementation of Kripke Structures.</p>
+<p>We plan to support other Transition Systems as well in the future.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mctk.models.</span></span><span class="sig-name descname"><span class="pre">KripkeStruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model_json</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class that implements a Kripke Structure for Model Checking.</p>
+<p>An instance of thie class can be created from a JSON file or from scratch.
+For more information about Kripke Structures, see:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Kripke_structure_(model_checking">https://en.wikipedia.org/wiki/Kripke_structure_(model_checking</a>).</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct._atoms">
+<span class="sig-name descname"><span class="pre">_atoms</span></span><a class="headerlink" href="#mctk.models.KripkeStruct._atoms" title="Permalink to this definition"></a></dt>
+<dd><p>Atoms, can only be reset before any state is created</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct._atoms_set">
+<span class="sig-name descname"><span class="pre">_atoms_set</span></span><a class="headerlink" href="#mctk.models.KripkeStruct._atoms_set" title="Permalink to this definition"></a></dt>
+<dd><p>Atoms, a duplicate of “_atoms”, only for efficiency</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct._states">
+<span class="sig-name descname"><span class="pre">_states</span></span><a class="headerlink" href="#mctk.models.KripkeStruct._states" title="Permalink to this definition"></a></dt>
+<dd><p>States, Key is the state name, Value is the state label</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>_UniqueValueDict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct._starts">
+<span class="sig-name descname"><span class="pre">_starts</span></span><a class="headerlink" href="#mctk.models.KripkeStruct._starts" title="Permalink to this definition"></a></dt>
+<dd><p>Start States</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct._trans">
+<span class="sig-name descname"><span class="pre">_trans</span></span><a class="headerlink" href="#mctk.models.KripkeStruct._trans" title="Permalink to this definition"></a></dt>
+<dd><p>Transitions, Key is the source state, Value is a set of target states</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>defaultdict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct._trans_inverted">
+<span class="sig-name descname"><span class="pre">_trans_inverted</span></span><a class="headerlink" href="#mctk.models.KripkeStruct._trans_inverted" title="Permalink to this definition"></a></dt>
+<dd><p>Inverted Transitions, Key is the target state, Value is a set of source states</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>defaultdict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.add_state">
+<span class="sig-name descname"><span class="pre">add_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.add_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.add_state" title="Permalink to this definition"></a></dt>
+<dd><p>Add a State to the Kripke Structure.</p>
+<p>The State Label is a list of strings, where each string is an Atom.
+For example, if the atom is (“a”, “b”, “c”),
+then the label can be [“a”], [“a”, “b”, “c”], or [].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – a string representing the State Name</p></li>
+<li><p><strong>label</strong> – a list of strings representing the State Label</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if the State Name or State Label exists, can’t add again</p></li>
+<li><p><strong>KrinkeStructError</strong> – if the State Label contains a Non-Eixsting Atom, can’t add it</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameter “label” should be a list to stay compatible with the JSON format.
+However, internally, the field “_states” is stored as a dict[str, int] for efficiency.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.add_states">
+<span class="sig-name descname"><span class="pre">add_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.add_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.add_states" title="Permalink to this definition"></a></dt>
+<dd><p>Add multiple States to the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – a dict, Key is the State Name, Value is the State Label</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if a State Name or a State Label exists, can’t add again</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.add_trans">
+<span class="sig-name descname"><span class="pre">add_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.add_trans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.add_trans" title="Permalink to this definition"></a></dt>
+<dd><p>Add multiple Transitions to the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>trans</strong> – a dict, Key is the Source State Name, Value is a list of Target State Names</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if Source or Target State doesn’t exist, can’t add transition</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameter “trans” should be a dict whose value is a list, to stay compatible with the JSON format.
+However, internally, the field “_trans” is stored as a dict whose value is a set for efficiency.
+For more information about list v.s. set, see:
+<a class="reference external" href="https://stackoverflow.com/questions/2831212/python-sets-vs-lists">https://stackoverflow.com/questions/2831212/python-sets-vs-lists</a></p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.get_SCCs">
+<span class="sig-name descname"><span class="pre">get_SCCs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.get_SCCs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.get_SCCs" title="Permalink to this definition"></a></dt>
+<dd><p>Get all Strongly Connected Components (SCCs) in the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a list of sets, where each set contains the State Names in a SCC</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.get_atoms">
+<span class="sig-name descname"><span class="pre">get_atoms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.get_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.get_atoms" title="Permalink to this definition"></a></dt>
+<dd><p>Get Atoms of the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a tuple of strings representing the Atoms</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.get_label_of_state">
+<span class="sig-name descname"><span class="pre">get_label_of_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.get_label_of_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.get_label_of_state" title="Permalink to this definition"></a></dt>
+<dd><p>Given a State Name, get the corresponding State Label.</p>
+<p>For example, if atoms is (“a”, “b”, “c”, “d”),
+the State Name is “s1”, and the State Label is 0b1010,
+then get_label_of_state(“s1”) will return the set {“a”, “c”}.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – a string representing the State Name</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>a set of strings representing the State Label, instead of the binary form</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if the State Name doesn’t exist, can’t get the Label of it</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.get_starts">
+<span class="sig-name descname"><span class="pre">get_starts</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.get_starts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.get_starts" title="Permalink to this definition"></a></dt>
+<dd><p>Get Start States of the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a set of strings representing the Start States</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.get_state_names">
+<span class="sig-name descname"><span class="pre">get_state_names</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.get_state_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.get_state_names" title="Permalink to this definition"></a></dt>
+<dd><p>Get just State Names of the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a set of strings representing the State Names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.get_states">
+<span class="sig-name descname"><span class="pre">get_states</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.get_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.get_states" title="Permalink to this definition"></a></dt>
+<dd><p>Get States of the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a dict, Key is the State Name, Value is the State Label</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The State Label is store in the binary representation,
+instead of the list of strings.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.get_trans">
+<span class="sig-name descname"><span class="pre">get_trans</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">defaultdict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.get_trans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.get_trans" title="Permalink to this definition"></a></dt>
+<dd><p>Get Transitions of the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a defaultdict, Key is the Source State Name, Value is a set of Target State Names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.get_trans_inverted">
+<span class="sig-name descname"><span class="pre">get_trans_inverted</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">defaultdict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.get_trans_inverted"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.get_trans_inverted" title="Permalink to this definition"></a></dt>
+<dd><p>Get Inverted Transitions of the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>a defaultdict, Key is the Target State Name, Value is a set of Source State Names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.remove_state">
+<span class="sig-name descname"><span class="pre">remove_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.remove_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.remove_state" title="Permalink to this definition"></a></dt>
+<dd><p>Remove a State from the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>state</strong> – a string representing the State Name</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if the State Name doesn’t exist, can’t remove it</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.remove_states">
+<span class="sig-name descname"><span class="pre">remove_states</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">states</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.remove_states"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.remove_states" title="Permalink to this definition"></a></dt>
+<dd><p>Remove multiple States from the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>states</strong> – a list of strings representing the State Names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.remove_trans">
+<span class="sig-name descname"><span class="pre">remove_trans</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">trans</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.remove_trans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.remove_trans" title="Permalink to this definition"></a></dt>
+<dd><p>Remove multiple Transitions from the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>trans</strong> – a dict, Key is the Source State Name, Value is a list of Target State Names</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if a Transition doesn’t exist, can’t remove it</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameter “trans” should be a dict whose value is a list for efficiency,
+since it will only be iterated once.
+However, internally, the field “_trans” is stored as a dict whose value is a set for efficiency.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.reverse_all_trans">
+<span class="sig-name descname"><span class="pre">reverse_all_trans</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.reverse_all_trans"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.reverse_all_trans" title="Permalink to this definition"></a></dt>
+<dd><p>Reverse all Transitions in the Kripke Structure.</p>
+<p>This funciton is destructive!!!
+It will NOT create a new copy of the current Kripke Structure,
+but will directly modify the current Kripke Structure.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.set_atoms">
+<span class="sig-name descname"><span class="pre">set_atoms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atoms</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.set_atoms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.set_atoms" title="Permalink to this definition"></a></dt>
+<dd><p>Set Atoms of the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>atoms</strong> – a list of strings representing the Atoms</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if any state exists, can’t reset atoms</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameter “atoms” should be a list to stay compatible with the JSON format.
+However, internally, the field “_atoms” is stored as a tuple for efficiency.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.set_label_of_state">
+<span class="sig-name descname"><span class="pre">set_label_of_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_set</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Set</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.set_label_of_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.set_label_of_state" title="Permalink to this definition"></a></dt>
+<dd><p>Given an existing State Name, (re)set the State Label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> – a string representing the State Name</p></li>
+<li><p><strong>label_set</strong> – a set of strings representing the State Label</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if the State Name doesn’t exist, can’t (re)set the State Label</p></li>
+<li><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if the Label has been assigned to a differnt State Name, can’t assign it</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameter “label_set” should be a set, NOT a list, for efficiency.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="mctk.models.KripkeStruct.set_starts">
+<span class="sig-name descname"><span class="pre">set_starts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">starts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStruct.set_starts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStruct.set_starts" title="Permalink to this definition"></a></dt>
+<dd><p>Set Start States of the Kripke Structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>starts</strong> – a set of strings representing the Start States</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#mctk.models.KripkeStructError" title="mctk.models.KripkeStructError"><strong>KripkeStructError</strong></a> – if a state doesn’t exist, can’t set it as a Start State</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The parameter “starts” should be a list to stay compatible with the JSON format.
+However, internally, the field “_starts” is stored as a set for efficiency.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="mctk.models.KripkeStructError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">mctk.models.</span></span><span class="sig-name descname"><span class="pre">KripkeStructError</span></span><a class="reference internal" href="../_modules/mctk/models.html#KripkeStructError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#mctk.models.KripkeStructError" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Exceptions raised by methods related to class KripkeStruct.</p>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../tutorials/getstarted.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorials/contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, marcusm117.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

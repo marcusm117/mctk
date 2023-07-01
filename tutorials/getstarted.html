@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; Model Checking Toolkit (MCTK) 0.1.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="../apis/mctk.html" />
+    <link rel="prev" title="Welcome to Model Checking Toolkit (MCTK)’s documentation!" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Model Checking Toolkit (MCTK)
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#developing">Developing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#linting-testing">Linting &amp; Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#create-a-kripke-structure-from-scratch">Create a Kripke Structure from Scratch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checking-simple-ctl-formula-on-the-kripke-structure">Checking Simple CTL Formula on the Kripke Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checking-composite-ctl-formula-on-the-kripke-structure">Checking Composite CTL Formula on the Kripke Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#checking-ctl-formula-on-a-complex-kripke-structure">Checking CTL formula on a Complex Kripke Structure</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../apis/mctk.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Model Checking Toolkit (MCTK)</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/tutorials/getstarted.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="https://pypi.org/project/mctk-py/"><img alt="PyPI" src="https://img.shields.io/pypi/v/mctk-py?color=blue&amp;label=PyPI" /></a> <a class="reference external" href="https://github.com/marcusm117/mctk/actions?query=workflow%3A%22Build+Status%22"><img alt="CI" src="https://github.com/marcusm117/mctk/workflows/CI/badge.svg?branch=dev" /></a> <a class="reference external" href="https://codecov.io/gh/marcusm117/mctk"><img alt="codecov" src="https://codecov.io/gh/marcusm117/mctk/branch/dev/graph/badge.svg" /></a> <a class="reference external" href="https://marcusm117.github.io/mctk/"><img alt="Docs" src="https://github.com/marcusm117/mctk/workflows/Docs/badge.svg?branch=dev" /></a> <a class="reference external" href="https://github.com/marcusm117/mctk/blob/dev/LICENSE"><img alt="License" src="https://img.shields.io/badge/License-Apache_2.0-green" /></a> <a class="reference external" href="https://github.com/marcusm117/mctk/issues"><img alt="Issues" src="https://img.shields.io/github/issues/marcusm117/FV_mctk?color=red&amp;label=Issues" /></a></p>
+<p><a class="reference external" href="https://marcusm117.github.io/mctk/">Model Checking Toolkit for Python.</a></p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">mctk</span></code> is a Python library for Explicit-State Model Checking (will also support Symbolic Model Checking and Bounded Model Checking in the future) on Kripke Structures (will also support other Transition Systems) supporting the CTL(Computation Tree Logic) operators: <strong>EX, EU, EG, EF, AX, AU, AG, AF</strong>, and the Propositional Logic operators: <strong>NOT, AND, OR, IMPLIES, IFF</strong>.</p>
+<p>Users can use functions that implements CTL operators to formally verify if a Kripke Structure (can be created during runtime or input in a JSON file) satisfies certain CTL properties. All checking functions will return a set of states that satisfy the CTL property, which means that if any start state of the Kripke Structure is in the returned set, then the Kripke Structure satisfies the CTL property.</p>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h2>
+<p>Get the latest version of <code class="docutils literal notranslate"><span class="pre">mctk</span></code> from PyPI. Note that the registered name is <code class="docutils literal notranslate"><span class="pre">mctk-py</span></code> on PyPI due to the strict typo-squatting prevention mechanism of the registry. However, when using the library, you should import it as <code class="docutils literal notranslate"><span class="pre">mctk</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip3<span class="w"> </span>install<span class="w"> </span>mctk-py
+</pre></div>
+</div>
+<p>If you are having trouble with <code class="docutils literal notranslate"><span class="pre">pip3</span></code>, you can also install from the source code, see <a class="reference internal" href="#developing"><span class="xref myst">Developing</span></a>.</p>
+</section>
+<section id="developing">
+<h2>Developing<a class="headerlink" href="#developing" title="Permalink to this heading"></a></h2>
+<p>Clone this Repository to your Local Environment.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/marcusm117/mctk.git
+</pre></div>
+</div>
+<p>Go into the Repository Directory.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>mctk
+</pre></div>
+</div>
+<p>Install the Library with all Dependencies.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>develop
+</pre></div>
+</div>
+</section>
+<section id="linting-testing">
+<h2>Linting &amp; Testing<a class="headerlink" href="#linting-testing" title="Permalink to this heading"></a></h2>
+<p>We use a <code class="docutils literal notranslate"><span class="pre">Makefile</span></code> as a command registry:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">format</span></code>: autoformat  this library with <code class="docutils literal notranslate"><span class="pre">black</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">lint</span></code>: perform static analysis of this library with <code class="docutils literal notranslate"><span class="pre">black</span></code>, <code class="docutils literal notranslate"><span class="pre">flake8</span></code> and <code class="docutils literal notranslate"><span class="pre">pylint</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">annotate</span></code>: run type checking using <code class="docutils literal notranslate"><span class="pre">mypy</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">test</span></code>: run automated tests with <code class="docutils literal notranslate"><span class="pre">pytest</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">coverage</span></code>: run automated tests with <code class="docutils literal notranslate"><span class="pre">pytest</span></code> and collect coverage information</p></li>
+</ul>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this heading"></a></h2>
+<section id="create-a-kripke-structure-from-scratch">
+<h3>Create a Kripke Structure from Scratch<a class="headerlink" href="#create-a-kripke-structure-from-scratch" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mctk</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="c1"># create a Kripke Structure from scratch</span>
+<span class="n">ks</span> <span class="o">=</span> <span class="n">KripkeStruct</span><span class="p">()</span>
+
+<span class="c1"># set 2 Atomic Propositions in this Kripke Structure</span>
+<span class="n">ks</span><span class="o">.</span><span class="n">set_atoms</span><span class="p">([</span><span class="s2">&quot;p&quot;</span><span class="p">,</span> <span class="s2">&quot;q&quot;</span><span class="p">])</span>
+
+<span class="c1"># add 2 states to the Kripke Structure</span>
+<span class="c1"># a State Name is represented by a string, it must be unique</span>
+<span class="c1"># a State Label is represented by a list of Atoms, it must be unique</span>
+<span class="n">ks</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s2">&quot;s0&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">])</span>
+<span class="n">ks</span><span class="o">.</span><span class="n">add_state</span><span class="p">(</span><span class="s2">&quot;s1&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;q&quot;</span><span class="p">])</span>
+
+<span class="c1"># set the Start States of the Kripke Structure</span>
+<span class="c1"># there can be multiple Start States</span>
+<span class="n">ks</span><span class="o">.</span><span class="n">set_starts</span><span class="p">([</span><span class="s2">&quot;s0&quot;</span><span class="p">])</span>
+
+<span class="c1"># add 2 Transitions to the Kripke Structure</span>
+<span class="c1"># a Transition is represented by a key-value pair</span>
+<span class="c1"># where key the Source State Name and value is a list of Destination State Names</span>
+<span class="n">ks</span><span class="o">.</span><span class="n">add_trans</span><span class="p">({</span><span class="s2">&quot;s0&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;s1&quot;</span><span class="p">],</span> <span class="s2">&quot;s1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;s0&quot;</span><span class="p">]})</span>
+</pre></div>
+</div>
+</section>
+<section id="checking-simple-ctl-formula-on-the-kripke-structure">
+<h3>Checking Simple CTL Formula on the Kripke Structure<a class="headerlink" href="#checking-simple-ctl-formula-on-the-kripke-structure" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># check if the Kripke Structure satisfies the CTL formula: EX p</span>
+<span class="c1"># SAT_atom(ks, &quot;p&quot;) returns a set of states that satisfy the Atomic Proposition p</span>
+<span class="c1"># EX returns a set of states that satisfy the CTL formula EX p</span>
+<span class="n">sat_states</span> <span class="o">=</span> <span class="n">EX</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">))</span>
+
+<span class="c1"># the result should be {&quot;s1&quot;}</span>
+<span class="c1"># since the start state &quot;s0&quot; is not in sat_states, ks doesn&#39;t satisfy the CTL formula</span>
+<span class="k">assert</span> <span class="n">sat_states</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;s1&quot;</span><span class="p">}</span>
+
+<span class="c1"># check if the Kripke Structure satisfies the CTL formula: E p U q</span>
+<span class="c1"># SAT_atom(ks, &quot;p&quot;) returns a set of states that satisfy the Atomic Proposition p</span>
+<span class="c1"># SAT_atom(ks, &quot;q&quot;) returns a set of states that satisfy the Atomic Proposition q</span>
+<span class="c1"># EU returns a set of states that satisfy the CTL formula E p U q</span>
+<span class="n">sat_states</span> <span class="o">=</span> <span class="n">EU</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;q&quot;</span><span class="p">))</span>
+
+<span class="c1"># the result should be {&quot;s0&quot;, &quot;s1&quot;}</span>
+<span class="c1"># since the start state &quot;s0&quot; is in sat_states, ks satisfies the CTL formula</span>
+<span class="k">assert</span> <span class="n">sat_states</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;s0&quot;</span><span class="p">,</span> <span class="s2">&quot;s1&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="checking-composite-ctl-formula-on-the-kripke-structure">
+<h3>Checking Composite CTL Formula on the Kripke Structure<a class="headerlink" href="#checking-composite-ctl-formula-on-the-kripke-structure" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># check if the Kripke Structure satisfies the CTL formula: EX (p AND EX q)</span>
+<span class="n">sat_states</span> <span class="o">=</span> <span class="n">EX</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">AND</span><span class="p">(</span><span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">EX</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;q&quot;</span><span class="p">))))</span>
+
+<span class="c1"># the result should be {&quot;s1&quot;}</span>
+<span class="c1"># since the start state &quot;s0&quot; is not in sat_states, ks doesn&#39;t satisfy the CTL formula</span>
+<span class="k">assert</span> <span class="n">sat_states</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;s1&quot;</span><span class="p">}</span>
+
+<span class="c1"># check if the Kripke Structure satisfies the CTL formula: EG (A p U (NOT q))</span>
+<span class="n">sat_states</span> <span class="o">=</span> <span class="n">EG</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">AU</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">),</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;q&quot;</span><span class="p">))))</span>
+
+<span class="c1"># the result should be set(), empty set</span>
+<span class="c1"># since the start state &quot;s0&quot; is not in sat_states, ks doesn&#39;t satisfy the CTL formula</span>
+<span class="k">assert</span> <span class="n">sat_states</span> <span class="o">==</span> <span class="nb">set</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="checking-ctl-formula-on-a-complex-kripke-structure">
+<h3>Checking CTL formula on a Complex Kripke Structure<a class="headerlink" href="#checking-ctl-formula-on-a-complex-kripke-structure" title="Permalink to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ks_json</span> <span class="o">=</span> <span class="p">{</span>
+   <span class="s2">&quot;Atoms&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">],</span>
+   <span class="s2">&quot;States&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s2">&quot;s1&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;s2&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;s3&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;s4&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;s5&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;s6&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">],</span>
+      <span class="s2">&quot;s7&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">],</span>
+   <span class="p">},</span>
+   <span class="s2">&quot;Starts&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;s1&quot;</span><span class="p">],</span>
+   <span class="s2">&quot;Trans&quot;</span><span class="p">:</span> <span class="p">{</span>
+      <span class="s1">&#39;s1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s2&#39;</span><span class="p">],</span>
+      <span class="s1">&#39;s2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;s4&#39;</span><span class="p">],</span>
+      <span class="s1">&#39;s3&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s4&#39;</span><span class="p">],</span>
+      <span class="s1">&#39;s4&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s7&#39;</span><span class="p">],</span>
+      <span class="s1">&#39;s5&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s6&#39;</span><span class="p">],</span>
+      <span class="s1">&#39;s6&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s7&#39;</span><span class="p">,</span> <span class="s1">&#39;s5&#39;</span><span class="p">],</span>
+      <span class="s1">&#39;s7&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;s5&#39;</span><span class="p">],</span>
+   <span class="p">},</span>
+<span class="p">}</span>
+<span class="n">ks</span> <span class="o">=</span> <span class="n">KripkeStruct</span><span class="p">(</span><span class="n">ks_json</span><span class="p">)</span>
+
+<span class="c1"># check if the Kripke Structure satisfies the CTL formula: EX a</span>
+<span class="n">sat_states</span> <span class="o">=</span> <span class="n">EX</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">))</span>
+
+<span class="c1"># the result should be {&quot;s1&quot;}</span>
+<span class="c1"># since the start state &quot;s1&quot; is in sat_states, ks satisfies the CTL formula</span>
+<span class="k">assert</span> <span class="n">sat_states</span> <span class="o">==</span> <span class="p">{</span><span class="s2">&quot;s1&quot;</span><span class="p">}</span>
+
+<span class="c1"># check if the Kripke Structure satisfies the CTL formula: E a U b</span>
+<span class="n">sat_states</span> <span class="o">=</span> <span class="n">EU</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">),</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">))</span>
+
+<span class="c1"># the result should be {&#39;s1&#39;, &#39;s2&#39;, &#39;s3&#39;, &#39;s4&#39;, &#39;s5&#39;}</span>
+<span class="c1"># since the start state &quot;s1&quot; is in sat_states, ks satisfies the CTL formula</span>
+<span class="k">assert</span> <span class="n">sat_states</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;s1&#39;</span><span class="p">,</span> <span class="s1">&#39;s2&#39;</span><span class="p">,</span> <span class="s1">&#39;s3&#39;</span><span class="p">,</span> <span class="s1">&#39;s4&#39;</span><span class="p">,</span> <span class="s1">&#39;s5&#39;</span><span class="p">}</span>
+
+<span class="c1"># check if the Kripke Structure satisfies the CTL formula: EG a</span>
+<span class="n">sat_states</span> <span class="o">=</span> <span class="n">EG</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">))</span>
+
+<span class="c1"># the result should be set()</span>
+<span class="c1"># since the start state &quot;s1&quot; is not in sat_states, ks doesn&#39;t satisfy the CTL formula</span>
+<span class="k">assert</span> <span class="n">sat_states</span> <span class="o">==</span> <span class="nb">set</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="Welcome to Model Checking Toolkit (MCTK)’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../apis/mctk.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, marcusm117.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

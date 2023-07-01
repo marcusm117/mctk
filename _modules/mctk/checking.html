@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mctk.checking &mdash; Model Checking Toolkit (MCTK) 0.1.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Model Checking Toolkit (MCTK)
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/getstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apis/mctk.html">API Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/contributing.html">Contributing</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Model Checking Toolkit (MCTK)</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">mctk.checking</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for mctk.checking</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Authors: marcusm117</span>
+<span class="c1"># License: Apache 2.0</span>
+<span class="sd">&quot;&quot;&quot;This Module contains functions for Explicit-State Model Checking CTL properties on the class KripkeStruct.</span>
+
+<span class="sd">We plan to support Symbolic Model Checking and Bounded Model Checking in the future.</span>
+
+<span class="sd">Examples:</span>
+<span class="sd">    &gt;&gt;&gt; from mctk import *</span>
+<span class="sd">    &gt;&gt;&gt; ks_json = {</span>
+<span class="sd">    ...     &quot;Atoms&quot;: [&quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;d&quot;],</span>
+<span class="sd">    ...     &quot;States&quot;: {</span>
+<span class="sd">    ...         &quot;s1&quot;: 0b1000,  # s1 has labels &quot;a&quot;</span>
+<span class="sd">    ...         &quot;s2&quot;: 0b1100,  # s2 has labels &quot;a&quot;, &quot;b&quot;</span>
+<span class="sd">    ...         &quot;s3&quot;: 0b0110,  # s3 has labels &quot;b&quot;, &quot;c&quot;</span>
+<span class="sd">    ...         &quot;s4&quot;: 0b0111,  # s4 has labels &quot;b&quot;, &quot;c&quot;, &quot;d&quot;</span>
+<span class="sd">    ...         &quot;s5&quot;: 0b0100,  # s5 has label &quot;b&quot;</span>
+<span class="sd">    ...         &quot;s6&quot;: 0b0010,  # s6 has label &quot;c&quot;</span>
+<span class="sd">    ...         &quot;s7&quot;: 0b0001,  # s7 has label &quot;d&quot;</span>
+<span class="sd">    ...     },</span>
+<span class="sd">    ...     &quot;Starts&quot;: [&quot;s1&quot;],</span>
+<span class="sd">    ...     &quot;Trans&quot;: {</span>
+<span class="sd">    ...         &#39;s1&#39;: [&#39;s2&#39;],</span>
+<span class="sd">    ...         &#39;s2&#39;: [&#39;s3&#39;, &#39;s4&#39;],</span>
+<span class="sd">    ...         &#39;s3&#39;: [&#39;s4&#39;],</span>
+<span class="sd">    ...         &#39;s4&#39;: [&#39;s7&#39;],</span>
+<span class="sd">    ...         &#39;s5&#39;: [&#39;s6&#39;],</span>
+<span class="sd">    ...         &#39;s6&#39;: [&#39;s7&#39;, &#39;s5&#39;],</span>
+<span class="sd">    ...         &#39;s7&#39;: [&#39;s5&#39;],</span>
+<span class="sd">    ...     },</span>
+<span class="sd">    ... }</span>
+<span class="sd">    &gt;&gt;&gt; ks = KripkeStruct(ks_json)</span>
+<span class="sd">    &gt;&gt;&gt; sat_states = SAT_atom(ks, &quot;a&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; print(sat_states)</span>
+<span class="sd">    {&#39;s1&#39;, &#39;s2&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; sat_states = AND(SAT_atom(ks, &quot;b&quot;), SAT_atom(ks, &quot;c&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; print(sat_states)</span>
+<span class="sd">    {&#39;s3&#39;, &#39;s4&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; sat_states = EX(ks, SAT_atom(ks, &quot;a&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; print(sat_states)</span>
+<span class="sd">    {&#39;s2&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; sat_states = EU(ks, SAT_atom(ks, &quot;a&quot;), SAT_atom(ks, &quot;b&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; print(sat_states)</span>
+<span class="sd">    {&#39;s1&#39;, &#39;s2&#39;, &#39;s3&#39;, &#39;s4&#39;, &#39;s5&#39;}</span>
+<span class="sd">    &gt;&gt;&gt; sat_states = EG(tmp_ks, SAT_atom(tmp_ks, &quot;a&quot;))</span>
+<span class="sd">    &gt;&gt;&gt; print(sat_states)</span>
+<span class="sd">    set()</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1"># Standard Libraries</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span>
+
+<span class="c1"># Internal Modules</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">KripkeStructError</span>
+
+
+<div class="viewcode-block" id="SAT_atom"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.SAT_atom">[docs]</a><span class="k">def</span> <span class="nf">SAT_atom</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">atomic_property</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate an atomic propositional property on a Kripke Structure.</span>
+
+<span class="sd">    Return a set of states where the atomic propositional property is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        atomic_property: an Atomic Propositional Property represented as a string</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the Atomic Propositional Property is satisfied</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        KripkeStructError: if the Atomic Property is not in the Kripke Structure</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sat_states</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">state_names</span> <span class="o">=</span> <span class="n">ks</span><span class="o">.</span><span class="n">get_state_names</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">atomic_property</span> <span class="o">==</span> <span class="s2">&quot;True&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">state_names</span>
+    <span class="k">if</span> <span class="n">atomic_property</span> <span class="o">==</span> <span class="s2">&quot;False&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">atomic_property</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">ks</span><span class="o">.</span><span class="n">get_atoms</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="n">KripkeStructError</span><span class="p">(</span><span class="s2">&quot;Can&#39;t check on an atom that&#39;s not in the Kripke Structure&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">state_names</span><span class="p">:</span>
+        <span class="c1"># get the Label for the State Name, which is a set of atoms</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">ks</span><span class="o">.</span><span class="n">get_label_of_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="c1"># if the atomic property is in the Label, then this state satisfies the atomic property</span>
+        <span class="k">if</span> <span class="n">atomic_property</span> <span class="ow">in</span> <span class="n">label</span><span class="p">:</span>
+            <span class="n">sat_states</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sat_states</span></div>
+
+
+<div class="viewcode-block" id="NOT"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.NOT">[docs]</a><span class="k">def</span> <span class="nf">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the NOT operator on a CTL property.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;NOT property&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;NOT property&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># complement of the set</span>
+    <span class="k">return</span> <span class="n">ks</span><span class="o">.</span><span class="n">get_state_names</span><span class="p">()</span> <span class="o">-</span> <span class="n">property1</span></div>
+
+
+<div class="viewcode-block" id="AND"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.AND">[docs]</a><span class="k">def</span> <span class="nf">AND</span><span class="p">(</span><span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">property2</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the AND operator on two CTL properties.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;property1 AND property2&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property1: a CTL property represented as a set of states that satisfy the property</span>
+<span class="sd">        property2: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;property1 AND property2&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># intersection of the two sets</span>
+    <span class="k">return</span> <span class="n">property1</span> <span class="o">&amp;</span> <span class="n">property2</span></div>
+
+
+<div class="viewcode-block" id="OR"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.OR">[docs]</a><span class="k">def</span> <span class="nf">OR</span><span class="p">(</span><span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">property2</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the OR operator on two CTL properties.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;property1 OR property2&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property1: a CTL property represented as a set of states that satisfy the property</span>
+<span class="sd">        property2: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;property1 OR property2&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># union of the two sets</span>
+    <span class="k">return</span> <span class="n">property1</span> <span class="o">|</span> <span class="n">property2</span></div>
+
+
+<div class="viewcode-block" id="IMPLIES"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.IMPLIES">[docs]</a><span class="k">def</span> <span class="nf">IMPLIES</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">property2</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the IMPLIES operator on two CTL properties.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;property1 IMPLIES property2&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property1: a CTL property represented as a set of states that satisfy the property</span>
+<span class="sd">        property2: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;property1 IMPLIES property2&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># complement of property1, then union property2</span>
+    <span class="c1"># p IMPLIES q = NOT(p) OR q</span>
+    <span class="k">return</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property1</span><span class="p">)</span> <span class="o">|</span> <span class="n">property2</span></div>
+
+
+<div class="viewcode-block" id="IFF"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.IFF">[docs]</a><span class="k">def</span> <span class="nf">IFF</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">property2</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the IFF operator on two CTL properties.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;property1 IFF property2&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property1: a CTL property represented as a set of states that satisfy the property</span>
+<span class="sd">        property2: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;property1 IFF property2&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># (p IFF q) = (p IMPLIES q) AND (q IMPLIES p)</span>
+    <span class="k">return</span> <span class="n">IMPLIES</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property1</span><span class="p">,</span> <span class="n">property2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">IMPLIES</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property2</span><span class="p">,</span> <span class="n">property1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="EX"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.EX">[docs]</a><span class="k">def</span> <span class="nf">EX</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the EX operator on a CTL property.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;EX property&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;EX property&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sat_states</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">ks</span><span class="o">.</span><span class="n">get_states</span><span class="p">():</span>
+        <span class="c1"># get the successors of the state</span>
+        <span class="n">successors</span> <span class="o">=</span> <span class="n">ks</span><span class="o">.</span><span class="n">get_trans</span><span class="p">()[</span><span class="n">state</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">successors</span><span class="p">:</span>
+            <span class="c1"># test if the successors satisfy the property</span>
+            <span class="k">if</span> <span class="n">successor</span> <span class="ow">in</span> <span class="n">property1</span><span class="p">:</span>
+                <span class="n">sat_states</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">sat_states</span></div>
+
+
+<div class="viewcode-block" id="AX"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.AX">[docs]</a><span class="k">def</span> <span class="nf">AX</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the AX operator on a CTL property.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;AX property&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;AX property&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># AX p = NOT (EX NOT(p))</span>
+    <span class="k">return</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">EX</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property1</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="EU"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.EU">[docs]</a><span class="k">def</span> <span class="nf">EU</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">property2</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the EU operator on two CTL properties.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;E property1 U property2&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property1: a CTL property represented as a set of states that satisfy the property</span>
+<span class="sd">        property2: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;E property1 U property2&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># if a state satisfies property2, then it satisfies &quot;E property1 U property2&quot; by definition</span>
+    <span class="c1"># therefore we intialize set_stats to be property2</span>
+    <span class="n">sat_states</span> <span class="o">=</span> <span class="n">property2</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sat_states</span><span class="p">)</span>
+
+    <span class="c1"># we keep adding states that can reach &quot;sat_states&quot; in 1 step, and also satisfy property1</span>
+    <span class="c1"># until we reach a fixed point</span>
+    <span class="c1"># i.e. no new states are added to &quot;sat_states&quot;</span>
+    <span class="c1"># i.e. size of &quot;sat_states&quot; does not change</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># get the predecessors of all states in &quot;sat_states&quot;</span>
+        <span class="n">predecessors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">sat_states</span><span class="p">:</span>
+            <span class="n">predecessors</span> <span class="o">=</span> <span class="n">predecessors</span> <span class="o">|</span> <span class="n">ks</span><span class="o">.</span><span class="n">get_trans_inverted</span><span class="p">()[</span><span class="n">state</span><span class="p">]</span>
+
+        <span class="c1"># add states that can reach &quot;sat_states&quot; in 1 step, and also satisfy property1</span>
+        <span class="n">sat_states</span> <span class="o">=</span> <span class="n">sat_states</span> <span class="o">|</span> <span class="p">(</span><span class="n">property1</span> <span class="o">&amp;</span> <span class="n">predecessors</span><span class="p">)</span>
+
+        <span class="c1"># if no new states are added, then we have reached a fixed point</span>
+        <span class="n">new_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sat_states</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_size</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">new_size</span>
+
+    <span class="k">return</span> <span class="n">sat_states</span></div>
+
+
+<div class="viewcode-block" id="EF"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.EF">[docs]</a><span class="k">def</span> <span class="nf">EF</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the EF operator on a CTL property.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;EF property&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;EF property&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># EF p = E true U p</span>
+    <span class="k">return</span> <span class="n">EU</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">ks</span><span class="o">.</span><span class="n">get_state_names</span><span class="p">(),</span> <span class="n">property1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AG"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.AG">[docs]</a><span class="k">def</span> <span class="nf">AG</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the AG operator on a CTL property.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;AG property&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;AG property&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># AG p = NOT (EF NOT(p))</span>
+    <span class="k">return</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">EF</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property1</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="EG"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.EG">[docs]</a><span class="k">def</span> <span class="nf">EG</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the EG operator on a CTL property.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;EG property&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where &quot;EG property&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sat_states</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="c1"># creat a sub-graph of the original Kripke Structure ks</span>
+    <span class="c1"># where we remove all states that do not satisfy property</span>
+    <span class="c1"># since we need to modify the reversed graph, we create a deepcopy of self</span>
+    <span class="n">sub_graph</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">ks</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">ks</span><span class="o">.</span><span class="n">get_states</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">state</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">property1</span><span class="p">:</span>
+            <span class="n">sub_graph</span><span class="o">.</span><span class="n">remove_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+    <span class="c1"># compute all Strongly Connected Components (SCCs) of the sub-graph</span>
+    <span class="c1"># SCCs is a set of SCCs, where each SCC is a set of states</span>
+    <span class="n">SCCs</span> <span class="o">=</span> <span class="n">sub_graph</span><span class="o">.</span><span class="n">get_SCCs</span><span class="p">()</span>
+
+    <span class="c1"># add all non-trivial SCCs to sat_states</span>
+    <span class="k">for</span> <span class="n">SCC</span> <span class="ow">in</span> <span class="n">SCCs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">SCC</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">sat_states</span> <span class="o">=</span> <span class="n">sat_states</span> <span class="o">|</span> <span class="n">SCC</span>
+
+    <span class="c1"># if there are no non-trivial SCCs, then no states satisfy EG property</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sat_states</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sat_states</span>
+
+    <span class="c1"># otherwise, we keep adding states that can reach &quot;sat_states&quot; in 1 step</span>
+    <span class="c1"># until we reach a fixed point</span>
+    <span class="c1"># i.e. no new states are added to &quot;sat_states&quot;</span>
+    <span class="c1"># i.e. size of &quot;sat_states&quot; does not change</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sat_states</span><span class="p">)</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># get the predecessors of all states in &quot;sat_states&quot;</span>
+        <span class="n">predecessors</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="n">sat_states</span><span class="p">:</span>
+            <span class="n">predecessors</span> <span class="o">=</span> <span class="n">predecessors</span> <span class="o">|</span> <span class="n">sub_graph</span><span class="o">.</span><span class="n">get_trans_inverted</span><span class="p">()[</span><span class="n">state</span><span class="p">]</span>
+
+        <span class="c1"># add states that can reach &quot;sat_states&quot; in 1 step</span>
+        <span class="n">sat_states</span> <span class="o">=</span> <span class="n">sat_states</span> <span class="o">|</span> <span class="n">predecessors</span>
+
+        <span class="c1"># if no new states are added, then we have reached a fixed point</span>
+        <span class="n">new_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sat_states</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_size</span> <span class="o">==</span> <span class="n">size</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">new_size</span>
+
+    <span class="k">return</span> <span class="n">sat_states</span></div>
+
+
+<div class="viewcode-block" id="AF"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.AF">[docs]</a><span class="k">def</span> <span class="nf">AF</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the AF operator on a CTL property.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;AF property&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;AF property&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># AF p = NOT (EG NOT(p))</span>
+    <span class="k">return</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">EG</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property1</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="AU"><a class="viewcode-back" href="../../apis/mctk.html#mctk.checking.AU">[docs]</a><span class="k">def</span> <span class="nf">AU</span><span class="p">(</span><span class="n">ks</span><span class="p">:</span> <span class="n">KripkeStruct</span><span class="p">,</span> <span class="n">property1</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">property2</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Implement the AU operator on two CTL properties.</span>
+
+<span class="sd">    Return a set of states where the CTL formula &quot;A property1 U property2&quot; is satisfied.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ks: a Kripke Structure</span>
+<span class="sd">        property1: a CTL property represented as a set of states that satisfy the property</span>
+<span class="sd">        property2: a CTL property represented as a set of states that satisfy the property</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a set of states where the CTL formula &quot;A property1 U property2&quot; is satisfied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># A p1 U p2 = NOT (E NOT(p2) U (NOT(p1) AND NOT(p2))) AND NOT (EG NOT(p2))</span>
+    <span class="c1">#           = NOT (E NOT(p2) U (NOT(p1) AND NOT(p2))) AND AF p2</span>
+    <span class="k">return</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">EU</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property2</span><span class="p">),</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property2</span><span class="p">)))</span> <span class="o">&amp;</span> <span class="n">NOT</span><span class="p">(</span>
+        <span class="n">ks</span><span class="p">,</span> <span class="n">EG</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">NOT</span><span class="p">(</span><span class="n">ks</span><span class="p">,</span> <span class="n">property2</span><span class="p">))</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, marcusm117.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

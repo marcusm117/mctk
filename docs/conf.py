@@ -23,7 +23,7 @@ copyright = '2023, marcusm117'
 author = 'marcusm117'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1.0'
+release = '0.1.1'
 
 
 # -- General configuration ---------------------------------------------------

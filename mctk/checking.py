@@ -1,5 +1,7 @@
 # Authors: marcusm117
 # License: Apache 2.0
+
+
 """This Module contains functions for Explicit-State Model Checking CTL properties on the class KripkeStruct.
 
 We plan to support Symbolic Model Checking and Bounded Model Checking in the future.

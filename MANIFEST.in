@@ -9,7 +9,6 @@ include Makefile
 
 prune .vscode
 prune .github
-prune scripts
 prune docs
 exclude .gitignore
 exclude .gitattributes

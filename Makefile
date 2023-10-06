@@ -44,7 +44,7 @@ type: annotate
 #########
 # TESTS #
 #########
-test: ## clean and run unit tests
+test:  ## clean and run unit tests
 	python -m pytest -vv mctk/tests
 
 # Alias
@@ -60,7 +60,7 @@ cov: coverage
 ###########
 # VERSION #
 ###########
-show-version:
+show-version:  ## doesn't work on Windows
 	bump2version --dry-run --allow-dirty setup.py --list | grep current | awk -F= '{print $2}'
 
 patch:
@@ -76,25 +76,28 @@ major:
 ########
 # DIST #
 ########
-dist-build:  # Build python dist
-	python setup.py sdist bdist_wheel
+dist-build:  ## build python dist, can also add bdist_wheel
+	python setup.py sdist
 
 dist-check:
 	python -m twine check dist/*
 
-dist: clean build dist-build dist-check  ## Build dists
+dist: deep-clean check dist-build dist-check  ## build dists
 
-publish:  # Upload python assets
+publish:  ## upload python assets
 	echo "would usually run python -m twine upload dist/* --skip-existing"
+
+# Alias
+pub: publish
 
 
 #########
 # CLEAN #
 #########
-deep-clean: ## clean everything untracked from the repository
+deep-clean:  ## clean everything untracked from the repository
 	git clean -fdx
 
-clean: ## clean the repository
+clean:  ## clean the repository, doesn't work on Windows
 	rm -rf .coverage coverage cover htmlcov logs build dist *.egg-info .pytest_cache
 
 
@@ -103,10 +106,10 @@ clean: ## clean the repository
 
 # Thanks to Francoise at marmelab.com for this
 .DEFAULT_GOAL := help
-help:
+help:  ## doesn't work on Windows
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
 print-%:
 	@echo '$*=$($*)'
 
-.PHONY: develop build install lint lints format fix check checks annotate test cov coverage tests show-version patch minor major dist-build dist-check dist publish clean-deep clean-linux help
+.PHONY: develop build install lint lints format fix check checks annotate type test tests coverage cov show-version patch minor major dist-build dist-check dist publish pub deep-clean clean help

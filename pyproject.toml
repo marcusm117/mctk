@@ -8,7 +8,7 @@ build-backend="setuptools.build_meta"
 
 [project]
 name = "mctk-py"
-authors = [{name = "marcusm117", email = "NA"}]
+authors = [{name = "marcusm117", email = "authors@gmail.com"}]
 description="Model Checking Toolkit for Python"
 readme = "README.md"
 version = "0.1.1"

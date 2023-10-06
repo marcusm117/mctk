@@ -1,3 +1,6 @@
+# Temporary Files
+tmp/
+
 # Coverage Report
 python_junit.xml
 

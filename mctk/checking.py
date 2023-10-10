@@ -1,5 +1,7 @@
 # Authors: marcusm117
 # License: Apache 2.0
+
+
 """This Module contains functions for Explicit-State Model Checking CTL properties on the class KripkeStruct.
 
 We plan to support Symbolic Model Checking and Bounded Model Checking in the future.
@@ -19,13 +21,13 @@ Examples:
     ...     },
     ...     "Starts": ["s1"],
     ...     "Trans": {
-    ...         's1': ['s2'],
-    ...         's2': ['s3', 's4'],
-    ...         's3': ['s4'],
-    ...         's4': ['s7'],
-    ...         's5': ['s6'],
-    ...         's6': ['s7', 's5'],
-    ...         's7': ['s5'],
+    ...         "s1": ["s2"],
+    ...         "s2": ["s3", "s4"],
+    ...         "s3": ["s4"],
+    ...         "s4": ["s7"],
+    ...         "s5": ["s6"],
+    ...         "s6": ["s7", "s5"],
+    ...         "s7": ["s5"],
     ...     },
     ... }
     >>> ks = KripkeStruct(ks_json)

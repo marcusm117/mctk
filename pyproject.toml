@@ -8,7 +8,7 @@ build-backend="setuptools.build_meta"
 
 [project]
 name = "mctk-py"
-authors = [{name = "marcusm117", email = "marcusmin117@gmail.com"}]
+authors = [{name = "marcusm117", email = "authors@gmail.com"}]
 description="Model Checking Toolkit for Python"
 readme = "README.md"
 version = "0.1.1"
@@ -37,6 +37,7 @@ repository = "https://github.com/marcusm117/mctk"
 [project.optional-dependencies]
 develop = [
     "black>=23",
+    "black[jupyter]",
     "bump2version>=1.0.0",
     "check-manifest",
     "flake8>=3.7.8",

@@ -1,6 +1,6 @@
 # Getting Started
 
-[![PyPI](https://img.shields.io/pypi/v/mctk-py?color=blue&label=PyPI)](https://pypi.org/project/mctk-py/) [![CI](https://github.com/marcusm117/mctk/workflows/CI/badge.svg?branch=dev)](https://github.com/marcusm117/mctk/actions?query=workflow%3A%22Build+Status%22) [![codecov](https://codecov.io/gh/marcusm117/mctk/branch/dev/graph/badge.svg)](https://codecov.io/gh/marcusm117/mctk) [![Docs](https://github.com/marcusm117/mctk/workflows/Docs/badge.svg?branch=dev)](https://marcusm117.github.io/mctk/) [![License](https://img.shields.io/badge/License-Apache_2.0-green)](https://github.com/marcusm117/mctk/blob/dev/LICENSE) [![Issues](https://img.shields.io/github/issues/marcusm117/FV_mctk?color=red&label=Issues)](https://github.com/marcusm117/mctk/issues)
+[![PyPI](https://img.shields.io/pypi/v/mctk-py?color=blue&label=PyPI)](https://pypi.org/project/mctk-py/) [![CI](https://github.com/marcusm117/mctk/workflows/CI/badge.svg?branch=dev)](https://github.com/marcusm117/mctk/actions?query=workflow%3A%22Build+Status%22) [![codecov](https://codecov.io/gh/marcusm117/mctk/branch/dev/graph/badge.svg)](https://codecov.io/gh/marcusm117/mctk) [![Docs](https://github.com/marcusm117/mctk/workflows/Docs/badge.svg?branch=dev)](https://marcusm117.github.io/mctk/) [![License](https://img.shields.io/badge/License-Apache_2.0-green)](https://github.com/marcusm117/mctk/blob/dev/LICENSE) [![Issues](https://img.shields.io/github/issues/marcusm117/mctk?color=red&label=Issues)](https://github.com/marcusm117/mctk/issues)
 
 [Model Checking Toolkit for Python.](https://marcusm117.github.io/mctk/)
 
@@ -136,13 +136,13 @@ ks_json = {
    },
    "Starts": ["s1"],
    "Trans": {
-      's1': ['s2'],
-      's2': ['s3', 's4'],
-      's3': ['s4'],
-      's4': ['s7'],
-      's5': ['s6'],
-      's6': ['s7', 's5'],
-      's7': ['s5'],
+      "s1": ["s2"],
+      "s2": ["s3", "s4"],
+      "s3": ["s4"],
+      "s4": ["s7"],
+      "s5": ["s6"],
+      "s6": ["s7", "s5"],
+      "s7": ["s5"],
    },
 }
 ks = KripkeStruct(ks_json)
